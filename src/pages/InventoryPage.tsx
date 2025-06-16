@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import PageHeader from '../components/layout/PageHeader';
@@ -37,17 +38,17 @@ const InventoryPage = () => {
     handleTitleChange, 
     handleDescriptionChange 
   } = usePageMetadata({
-    defaultTitle: 'Gestion des Stocks et Récoltes',
-    defaultDescription: 'Gérez votre inventaire et suivez les niveaux de stock de vos cultures guadeloupéennes'
+    defaultTitle: 'Gestão de Estoque e Produtos',
+    defaultDescription: 'Gerencie seu estoque e acompanhe os níveis de produtos para piscinas'
   });
 
   const handleExportData = () => {
     if (activeTab === 'inventory') {
-      console.log("Export des données d'inventaire lancé");
+      console.log("Exportação de dados de estoque iniciada");
     } else if (activeTab === 'crops') {
-      console.log("Export des données de cultures");
+      console.log("Exportação de dados de produtos");
     } else if (activeTab === 'weather') {
-      console.log("Export des données météo");
+      console.log("Exportação de dados climáticos");
     }
   };
 
@@ -61,7 +62,7 @@ const InventoryPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log(`Importation du fichier ${file.name}`);
+    console.log(`Importação do arquivo ${file.name}`);
     
     // Reset file input
     if (fileInputRef.current) {
@@ -70,11 +71,11 @@ const InventoryPage = () => {
   };
 
   const handleAddItem = () => {
-    const actionText = activeTab === 'inventory' ? 'stock' : 
-                      activeTab === 'crops' ? 'culture' : 
-                      activeTab === 'weather' ? 'alerte' : 'élément';
+    const actionText = activeTab === 'inventory' ? 'estoque' : 
+                      activeTab === 'crops' ? 'produto' : 
+                      activeTab === 'weather' ? 'alerta' : 'item';
                       
-    console.log(`Fonctionnalité d'ajout de ${actionText} activée`);
+    console.log(`Funcionalidade de adição de ${actionText} ativada`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +85,7 @@ const InventoryPage = () => {
 
   const handleDownloadTemplate = () => {
     downloadInventoryTemplate();
-    console.log("Téléchargement du modèle d'inventaire");
+    console.log("Download do modelo de estoque");
   };
 
   const renderTabActions = () => {
@@ -94,17 +95,17 @@ const InventoryPage = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="whitespace-nowrap transition-colors hover:bg-gray-100">
               <Download className="mr-2 h-4 w-4" />
-              Exporter
+              Exportar
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white border shadow-lg">
             <DropdownMenuItem onClick={handleExportData} className="cursor-pointer">
               <FileDown className="mr-2 h-4 w-4" />
-              Exporter CSV
+              Exportar CSV
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleExportData} className="cursor-pointer">
               <BarChart2 className="mr-2 h-4 w-4" />
-              Exporter PDF
+              Exportar PDF
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -113,18 +114,18 @@ const InventoryPage = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="whitespace-nowrap transition-colors hover:bg-gray-100">
               <Upload className="mr-2 h-4 w-4" />
-              Importer
+              Importar
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white border shadow-lg">
             <DropdownMenuItem onClick={handleImportClick} className="cursor-pointer">
               <FileUp className="mr-2 h-4 w-4" />
-              Importer un fichier
+              Importar arquivo
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDownloadTemplate} className="cursor-pointer">
               <Package className="mr-2 h-4 w-4" />
-              Télécharger modèle
+              Baixar modelo
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -142,9 +143,9 @@ const InventoryPage = () => {
           className="whitespace-nowrap transition-colors hover:bg-green-700"
         >
           <Plus className="mr-2 h-4 w-4" />
-          {activeTab === 'inventory' ? 'Ajouter un stock' : 
-           activeTab === 'crops' ? 'Ajouter une culture' : 
-           activeTab === 'weather' ? 'Ajouter une alerte' : 'Ajouter'}
+          {activeTab === 'inventory' ? 'Adicionar Estoque' : 
+           activeTab === 'crops' ? 'Adicionar Produto' : 
+           activeTab === 'weather' ? 'Adicionar Alerta' : 'Adicionar'}
         </Button>
       </div>
     );
@@ -159,7 +160,7 @@ const InventoryPage = () => {
       >
         <div className="relative flex-grow">
           <Input 
-            placeholder={`Rechercher dans ${activeTab === 'inventory' ? 'l\'inventaire' : activeTab === 'crops' ? 'les cultures' : 'les alertes'}`} 
+            placeholder={`Pesquisar em ${activeTab === 'inventory' ? 'estoque' : activeTab === 'crops' ? 'produtos' : 'alertas'}`} 
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-8"
@@ -178,7 +179,7 @@ const InventoryPage = () => {
           <DatePickerWithRange
             date={dateRange}
             setDate={setDateRange}
-            placeholderText="Filtrer par date"
+            placeholderText="Filtrar por data"
             align="end"
           />
         </div>
@@ -198,17 +199,17 @@ const InventoryPage = () => {
   const tabs: TabItem[] = [
     {
       value: 'inventory',
-      label: 'Inventaire',
+      label: 'Estoque',
       content: <Inventory dateRange={dateRange} searchTerm={searchTerm} />
     },
     {
       value: 'crops',
-      label: 'Cultures',
+      label: 'Produtos',
       content: cropsContent
     },
     {
       value: 'weather',
-      label: 'Météo',
+      label: 'Condições',
       content: <GuadeloupeWeatherAlerts />
     }
   ];
@@ -217,12 +218,12 @@ const InventoryPage = () => {
     setActiveTab(value);
     
     const tabLabels = {
-      inventory: 'l\'Inventaire',
-      crops: 'les Cultures',
-      weather: 'les Alertes Météo'
+      inventory: 'o Estoque',
+      crops: 'os Produtos',
+      weather: 'as Condições'
     };
     
-    console.log(`Vous consultez maintenant ${tabLabels[value as keyof typeof tabLabels] || value}`);
+    console.log(`Você está visualizando agora ${tabLabels[value as keyof typeof tabLabels] || value}`);
   };
 
   return (

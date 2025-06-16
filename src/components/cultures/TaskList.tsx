@@ -14,36 +14,28 @@ import {
 interface Task {
   id: number;
   task: string;
-  culture: string;
+  poolType: string;
   date: string;
-  priority: 'Haute' | 'Moyenne' | 'Basse';
+  priority: 'Alta' | 'Média' | 'Baixa';
 }
 
-const initialTasks: Task[] = [
-  { id: 1, task: 'Fertilisation de la canne', culture: 'Canne à Sucre', date: '2023-09-25', priority: 'Haute' },
-  { id: 2, task: 'Traitement contre la cercosporiose', culture: 'Banane', date: '2023-09-28', priority: 'Moyenne' },
-  { id: 3, task: 'Inspection croissance ananas', culture: 'Ananas', date: '2023-09-30', priority: 'Basse' },
-  { id: 4, task: 'Désherbage parcelle madère', culture: 'Madère', date: '2023-10-05', priority: 'Moyenne' },
-  { id: 5, task: 'Préparation coupe canne', culture: 'Canne à Sucre', date: '2024-01-10', priority: 'Haute' },
-];
-
 const TaskList = () => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTask, setNewTask] = useState<Partial<Task>>({
     task: '',
-    culture: '',
+    poolType: '',
     date: '',
-    priority: 'Moyenne'
+    priority: 'Média'
   });
 
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
-      case 'Haute':
+      case 'Alta':
         return 'bg-red-100 text-red-800 border-red-200';
-      case 'Moyenne':
+      case 'Média':
         return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'Basse':
+      case 'Baixa':
         return 'bg-green-100 text-green-800 border-green-200';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -51,12 +43,12 @@ const TaskList = () => {
   };
 
   const handleTaskComplete = (id: number) => {
-    console.log('Tâche marquée comme terminée');
+    console.log('Tarefa marcada como concluída');
     setTasks(tasks.filter(task => task.id !== id));
   };
 
   const handleTaskDelete = (id: number) => {
-    console.log('Tâche supprimée avec succès');
+    console.log('Tarefa excluída com sucesso');
     setTasks(tasks.filter(task => task.id !== id));
   };
 
@@ -64,47 +56,47 @@ const TaskList = () => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, priority } : task
     ));
-    console.log(`Priorité modifiée en "${priority}"`);
+    console.log(`Prioridade alterada para "${priority}"`);
   };
 
   const handleAddTask = () => {
-    if (!newTask.task || !newTask.culture || !newTask.date) {
-      console.error('Veuillez remplir tous les champs obligatoires');
+    if (!newTask.task || !newTask.poolType || !newTask.date) {
+      console.error('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
     const taskToAdd: Task = {
       id: Math.max(0, ...tasks.map(t => t.id)) + 1,
       task: newTask.task,
-      culture: newTask.culture,
+      poolType: newTask.poolType,
       date: newTask.date,
-      priority: newTask.priority as Task['priority'] || 'Moyenne'
+      priority: newTask.priority as Task['priority'] || 'Média'
     };
 
     setTasks([...tasks, taskToAdd]);
     setNewTask({
       task: '',
-      culture: '',
+      poolType: '',
       date: '',
-      priority: 'Moyenne'
+      priority: 'Média'
     });
     setShowAddTask(false);
-    console.log('Nouvelle tâche ajoutée avec succès');
+    console.log('Nova tarefa adicionada com sucesso');
   };
 
   return (
     <div className="bg-white rounded-xl border overflow-hidden shadow-sm">
       <div className="p-4 flex items-center justify-between border-b">
         <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-agri-primary" />
-          <h2 className="text-xl font-semibold">Tâches à venir</h2>
+          <Calendar className="h-5 w-5 text-blue-600" />
+          <h2 className="text-xl font-semibold">Tarefas Pendentes</h2>
         </div>
         <Button 
           onClick={() => setShowAddTask(!showAddTask)}
           className="bg-green-500 hover:bg-green-600 text-white transition-colors"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Ajouter une tâche
+          Adicionar Tarefa
         </Button>
       </div>
 
@@ -112,58 +104,58 @@ const TaskList = () => {
         <div className="p-4 bg-muted/20 border-b">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Tâche</label>
+              <label className="text-sm font-medium mb-1 block">Tarefa</label>
               <input
                 type="text"
                 value={newTask.task}
                 onChange={(e) => setNewTask({...newTask, task: e.target.value})}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-agri-primary focus:border-agri-primary"
-                placeholder="Description de la tâche"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Descrição da tarefa"
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Culture</label>
+              <label className="text-sm font-medium mb-1 block">Tipo de Piscina</label>
               <select
-                value={newTask.culture}
-                onChange={(e) => setNewTask({...newTask, culture: e.target.value})}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-agri-primary focus:border-agri-primary"
+                value={newTask.poolType}
+                onChange={(e) => setNewTask({...newTask, poolType: e.target.value})}
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Sélectionner une culture</option>
-                <option value="Canne à Sucre">Canne à Sucre</option>
-                <option value="Banane">Banane</option>
-                <option value="Ananas">Ananas</option>
-                <option value="Madère">Madère</option>
-                <option value="Igname">Igname</option>
+                <option value="">Selecionar tipo</option>
+                <option value="Piscina Pequena">Piscina Pequena</option>
+                <option value="Piscina Média">Piscina Média</option>
+                <option value="Piscina Grande">Piscina Grande</option>
+                <option value="Piscina Olímpica">Piscina Olímpica</option>
+                <option value="Spa/Jacuzzi">Spa/Jacuzzi</option>
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Date</label>
+              <label className="text-sm font-medium mb-1 block">Data</label>
               <input
                 type="date"
                 value={newTask.date}
                 onChange={(e) => setNewTask({...newTask, date: e.target.value})}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-agri-primary focus:border-agri-primary"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Priorité</label>
+              <label className="text-sm font-medium mb-1 block">Prioridade</label>
               <select
                 value={newTask.priority}
                 onChange={(e) => setNewTask({...newTask, priority: e.target.value as Task['priority']})}
-                className="w-full p-2 border rounded focus:ring-2 focus:ring-agri-primary focus:border-agri-primary"
+                className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="Haute">Haute</option>
-                <option value="Moyenne">Moyenne</option>
-                <option value="Basse">Basse</option>
+                <option value="Alta">Alta</option>
+                <option value="Média">Média</option>
+                <option value="Baixa">Baixa</option>
               </select>
             </div>
           </div>
           <div className="flex justify-end mt-4 space-x-2">
             <Button variant="outline" onClick={() => setShowAddTask(false)}>
-              Annuler
+              Cancelar
             </Button>
             <Button onClick={handleAddTask}>
-              Ajouter
+              Adicionar
             </Button>
           </div>
         </div>
@@ -173,76 +165,81 @@ const TaskList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">TÂCHE</TableHead>
-              <TableHead className="w-[20%]">CULTURE</TableHead>
-              <TableHead className="w-[15%]">DATE</TableHead>
-              <TableHead className="w-[15%]">PRIORITÉ</TableHead>
-              <TableHead className="w-[10%]">ACTIONS</TableHead>
+              <TableHead className="w-[40%]">TAREFA</TableHead>
+              <TableHead className="w-[20%]">TIPO DE PISCINA</TableHead>
+              <TableHead className="w-[15%]">DATA</TableHead>
+              <TableHead className="w-[15%]">PRIORIDADE</TableHead>
+              <TableHead className="w-[10%]">AÇÕES</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id} className="hover:bg-muted/20 transition-colors">
-                <TableCell className="font-medium">{task.task}</TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <Tag className="h-3 w-3 mr-1.5 text-agri-primary" />
-                    {task.culture}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {new Date(task.date).toLocaleDateString('fr-FR')}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Badge className={`cursor-pointer ${getPriorityStyle(task.priority)}`}>
-                        {task.priority} <ChevronDown className="ml-1 h-3 w-3 inline" />
-                      </Badge>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Haute')}>
-                        Haute
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Moyenne')}>
-                        Moyenne
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Basse')}>
-                        Basse
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleTaskComplete(task.id)}
-                      className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
-                      title="Marquer comme terminée"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleTaskDelete(task.id)}
-                      className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                      title="Supprimer"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-            {tasks.length === 0 && (
+            {tasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                  Aucune tâche à afficher
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <div className="flex flex-col items-center space-y-2">
+                    <Calendar className="h-12 w-12 text-gray-300" />
+                    <p>Nenhuma tarefa cadastrada</p>
+                    <p className="text-sm">Adicione uma nova tarefa para começar</p>
+                  </div>
                 </TableCell>
               </TableRow>
+            ) : (
+              tasks.map((task) => (
+                <TableRow key={task.id} className="hover:bg-muted/20 transition-colors">
+                  <TableCell className="font-medium">{task.task}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center">
+                      <Tag className="h-3 w-3 mr-1.5 text-blue-600" />
+                      {task.poolType}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(task.date).toLocaleDateString('pt-BR')}
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Badge className={`cursor-pointer ${getPriorityStyle(task.priority)}`}>
+                          {task.priority} <ChevronDown className="ml-1 h-3 w-3 inline" />
+                        </Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Alta')}>
+                          Alta
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Média')}>
+                          Média
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handlePriorityChange(task.id, 'Baixa')}>
+                          Baixa
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost" 
+                        size="icon"
+                        onClick={() => handleTaskComplete(task.id)}
+                        className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                        title="Marcar como concluída"
+                      >
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleTaskDelete(task.id)}
+                        className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        title="Excluir"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

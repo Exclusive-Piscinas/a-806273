@@ -14,7 +14,7 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
   categoryStats
 }) => {
   const getTotalInventoryValue = () => {
-    return inventoryData.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2);
+    return inventoryData.reduce((sum, item) => sum + (item.quantity * item.price), 0);
   };
 
   const getLowStockItems = () => {
@@ -25,10 +25,11 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
     const lowStockItems = getLowStockItems();
     const totalItems = inventoryData.length;
     
-    if (lowStockItems === 0) return { label: 'Excellent', color: 'text-green-500' };
-    if (lowStockItems / totalItems < 0.1) return { label: 'Bon', color: 'text-lime-500' };
-    if (lowStockItems / totalItems < 0.25) return { label: 'Moyen', color: 'text-amber-500' };
-    return { label: 'Attention', color: 'text-red-500' };
+    if (totalItems === 0) return { label: 'Sem dados', color: 'text-gray-500' };
+    if (lowStockItems === 0) return { label: 'Excelente', color: 'text-green-500' };
+    if (lowStockItems / totalItems < 0.1) return { label: 'Bom', color: 'text-lime-500' };
+    if (lowStockItems / totalItems < 0.25) return { label: 'Médio', color: 'text-amber-500' };
+    return { label: 'Atenção', color: 'text-red-500' };
   };
 
   const healthStatus = getInventoryHealthStatus();
@@ -38,22 +39,27 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Valeur totale</CardTitle>
+            <CardTitle className="text-lg">Valor Total</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{getTotalInventoryValue()} €</p>
+            <p className="text-3xl font-bold">
+              {getTotalInventoryValue().toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+              })}
+            </p>
           </CardContent>
         </Card>
         
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Articles</CardTitle>
+            <CardTitle className="text-lg">Artigos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
               <p className="text-3xl font-bold">{inventoryData.length}</p>
               <p className="text-muted-foreground">
-                {getLowStockItems()} à réapprovisionner
+                {getLowStockItems()} a reabastecer
               </p>
             </div>
           </CardContent>
@@ -61,7 +67,7 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
         
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">État du stock</CardTitle>
+            <CardTitle className="text-lg">Estado do Estoque</CardTitle>
           </CardHeader>
           <CardContent>
             <p className={`text-3xl font-bold ${healthStatus.color}`}>{healthStatus.label}</p>
@@ -71,34 +77,40 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
       
       <Card className="bg-white rounded-xl border">
         <CardHeader>
-          <CardTitle>Répartition par catégorie</CardTitle>
+          <CardTitle>Distribuição por Categoria</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={categoryStats}
-                margin={{ top: 10, right: 30, left: 20, bottom: 40 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  angle={-45} 
-                  textAnchor="end"
-                  tick={{ fontSize: 12 }}
-                  height={70}
-                />
-                <YAxis />
-                <Tooltip />
-                <Bar 
-                  dataKey="value" 
-                  fill="#4CAF50" 
-                  radius={[4, 4, 0, 0]} 
-                  fillOpacity={1} 
-                  name="Quantité"
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {categoryStats.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={categoryStats}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45} 
+                    textAnchor="end"
+                    tick={{ fontSize: 12 }}
+                    height={70}
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar 
+                    dataKey="value" 
+                    fill="#4CAF50" 
+                    radius={[4, 4, 0, 0]} 
+                    fillOpacity={1} 
+                    name="Quantidade"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-muted-foreground">Nenhum dado disponível para exibir</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
