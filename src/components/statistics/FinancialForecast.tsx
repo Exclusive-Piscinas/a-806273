@@ -27,48 +27,47 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Calculator, RefreshCw, TrendingUp, Share2 } from "lucide-react";
 
-// Dados de previsão para os próximos 12 meses
+// Dados de previsão para os próximos 12 meses - adaptado para piscinas
 const forecastData = [
-  { month: 'Jan', revenue: 28500, expenses: 20100, forecast: 8400, previous: 7200 },
-  { month: 'Fev', revenue: 30200, expenses: 21800, forecast: 8400, previous: 7500 },
-  { month: 'Mar', revenue: 32800, expenses: 22400, forecast: 10400, previous: 8200 },
-  { month: 'Abr', revenue: 35500, expenses: 23100, forecast: 12400, previous: 9200 },
-  { month: 'Mai', revenue: 38200, expenses: 23500, forecast: 14700, previous: 10700 },
-  { month: 'Jun', revenue: 37800, expenses: 22900, forecast: 14900, previous: 11200 },
-  { month: 'Jul', revenue: 42500, expenses: 24200, forecast: 18300, previous: 12400 },
-  { month: 'Ago', revenue: 44800, expenses: 25300, forecast: 19500, previous: 13100 },
-  { month: 'Set', revenue: 40200, expenses: 24800, forecast: 15400, previous: 12400 },
-  { month: 'Out', revenue: 38200, expenses: 23100, forecast: 15100, previous: 11800 },
-  { month: 'Nov', revenue: 36500, expenses: 22500, forecast: 14000, previous: 10900 },
-  { month: 'Dez', revenue: 41200, expenses: 25800, forecast: 15400, previous: 12200 }
+  { month: 'Jan', revenue: 85500, expenses: 60100, forecast: 25400, previous: 22200 },
+  { month: 'Fev', revenue: 90200, expenses: 65800, forecast: 24400, previous: 23500 },
+  { month: 'Mar', revenue: 98800, expenses: 67400, forecast: 31400, previous: 28200 },
+  { month: 'Abr', revenue: 105500, expenses: 69100, forecast: 36400, previous: 32200 },
+  { month: 'Mai', revenue: 118200, expenses: 70500, forecast: 47700, previous: 40700 },
+  { month: 'Jun', revenue: 137800, expenses: 72900, forecast: 64900, previous: 51200 },
+  { month: 'Jul', revenue: 142500, expenses: 74200, forecast: 68300, previous: 52400 },
+  { month: 'Ago', revenue: 144800, expenses: 75300, forecast: 69500, previous: 53100 },
+  { month: 'Set', revenue: 140200, expenses: 74800, forecast: 65400, previous: 52400 },
+  { month: 'Out', revenue: 138200, expenses: 73100, forecast: 65100, previous: 51800 },
+  { month: 'Nov', revenue: 136500, expenses: 72500, forecast: 64000, previous: 50900 },
+  { month: 'Dez', revenue: 141200, expenses: 75800, forecast: 65400, previous: 52200 }
 ];
 
 // Dados de projeção de fluxo de caixa
 const cashFlowProjection = [
-  { month: 'Jan', inflow: 28500, outflow: 20100, balance: 8400 },
-  { month: 'Fev', inflow: 30200, outflow: 21800, balance: 16800 },
-  { month: 'Mar', inflow: 32800, outflow: 22400, balance: 27200 },
-  { month: 'Abr', inflow: 35500, outflow: 23100, balance: 39600 },
-  { month: 'Mai', inflow: 38200, outflow: 23500, balance: 54300 },
-  { month: 'Jun', inflow: 37800, outflow: 22900, balance: 69200 },
-  { month: 'Jul', inflow: 42500, outflow: 24200, balance: 87500 },
-  { month: 'Ago', inflow: 44800, outflow: 25300, balance: 107000 },
-  { month: 'Set', inflow: 40200, outflow: 24800, balance: 122400 },
-  { month: 'Out', inflow: 38200, outflow: 23100, balance: 137500 },
-  { month: 'Nov', inflow: 36500, outflow: 22500, balance: 151500 },
-  { month: 'Dez', inflow: 41200, outflow: 25800, balance: 166900 }
+  { month: 'Jan', inflow: 85500, outflow: 60100, balance: 25400 },
+  { month: 'Fev', inflow: 90200, outflow: 65800, balance: 49800 },
+  { month: 'Mar', inflow: 98800, outflow: 67400, balance: 81200 },
+  { month: 'Abr', inflow: 105500, outflow: 69100, balance: 117600 },
+  { month: 'Mai', inflow: 118200, outflow: 70500, balance: 165300 },
+  { month: 'Jun', inflow: 137800, outflow: 72900, balance: 230200 },
+  { month: 'Jul', inflow: 142500, outflow: 74200, balance: 298500 },
+  { month: 'Ago', inflow: 144800, outflow: 75300, balance: 368000 },
+  { month: 'Set', inflow: 140200, outflow: 74800, balance: 433400 },
+  { month: 'Out', inflow: 138200, outflow: 73100, balance: 498500 },
+  { month: 'Nov', inflow: 136500, outflow: 72500, balance: 562500 },
+  { month: 'Dez', inflow: 141200, outflow: 75800, balance: 627900 }
 ];
 
 const FinancialForecast = () => {
   const [forecastDuration, setForecastDuration] = useState<string>("12");
   const [revenueFactor, setRevenueFactor] = useState<number[]>([100]);
   const [expenseFactor, setExpenseFactor] = useState<number[]>([100]);
-  const [revenueScenario, setRevenueScenario] = useState<string>("stable");
-  const [forecastModel, setForecastModel] = useState<string>("basic");
+  const [revenueScenario, setRevenueScenario] = useState<string>("estavel");
+  const [forecastModel, setForecastModel] = useState<string>("basico");
   
   const handleRefreshForecast = () => {
-    toast.info("Atualização das previsões financeiras");
-    // Em uma aplicação real, isso recalcularia as previsões com base nos fatores selecionados
+    toast.info("Atualizando previsões financeiras para piscinas");
   };
   
   const handleShareForecast = () => {
@@ -77,15 +76,14 @@ const FinancialForecast = () => {
   
   const handleRunSimulation = () => {
     toast.success("Simulação executada com sucesso");
-    // Em uma aplicação real, isso executaria um modelo de previsão mais sofisticado
   };
   
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div>
-          <h2 className="text-xl font-bold">Previsões Financeiras</h2>
-          <p className="text-muted-foreground">Projeções a {forecastDuration} meses baseadas nos dados históricos</p>
+          <h2 className="text-xl font-bold">Previsões Financeiras - Piscinas</h2>
+          <p className="text-muted-foreground">Projeções a {forecastDuration} meses baseadas no histórico de vendas</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Select value={forecastDuration} onValueChange={setForecastDuration}>
@@ -105,9 +103,9 @@ const FinancialForecast = () => {
               <SelectValue placeholder="Modelo" />
             </SelectTrigger>
             <SelectContent className="bg-white z-50">
-              <SelectItem value="basic">Modelo básico</SelectItem>
-              <SelectItem value="seasonal">Modelo sazonal</SelectItem>
-              <SelectItem value="advanced">Modelo avançado</SelectItem>
+              <SelectItem value="basico">Modelo básico</SelectItem>
+              <SelectItem value="sazonal">Modelo sazonal</SelectItem>
+              <SelectItem value="avancado">Modelo avançado</SelectItem>
             </SelectContent>
           </Select>
           
@@ -126,8 +124,8 @@ const FinancialForecast = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Margem líquida prevista</CardTitle>
-            <CardDescription>Comparação com o ano anterior</CardDescription>
+            <CardTitle>Margem Líquida Prevista</CardTitle>
+            <CardDescription>Comparação com vendas do ano anterior</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -141,9 +139,9 @@ const FinancialForecast = () => {
                   <YAxis />
                   <Tooltip 
                     formatter={(value, name) => {
-                      if (name === "forecast") return [`${value.toLocaleString()} €`, "Previsão"];
-                      if (name === "previous") return [`${value.toLocaleString()} €`, "Ano anterior"];
-                      return [`${value.toLocaleString()} €`, name];
+                      if (name === "forecast") return [`R$ ${value.toLocaleString()}`, "Previsão"];
+                      if (name === "previous") return [`R$ ${value.toLocaleString()}`, "Ano anterior"];
+                      return [`R$ ${value.toLocaleString()}`, name];
                     }}
                   />
                   <Legend />
@@ -170,8 +168,8 @@ const FinancialForecast = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Previsão de fluxo de caixa</CardTitle>
-            <CardDescription>Evolução do saldo de caixa</CardDescription>
+            <CardTitle>Previsão de Fluxo de Caixa</CardTitle>
+            <CardDescription>Evolução do saldo de caixa da empresa</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -184,7 +182,7 @@ const FinancialForecast = () => {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip 
-                    formatter={(value) => [`${value.toLocaleString()} €`, '']}
+                    formatter={(value) => [`R$ ${value.toLocaleString()}`, '']}
                   />
                   <Legend />
                   <ReferenceLine y={0} stroke="#000" />
@@ -205,13 +203,13 @@ const FinancialForecast = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Configurações de simulação</CardTitle>
-          <CardDescription>Ajuste os parâmetros para personalizar suas previsões</CardDescription>
+          <CardTitle>Configurações de Simulação</CardTitle>
+          <CardDescription>Ajuste os parâmetros para personalizar suas previsões de vendas</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <Label>Fator de receita ({revenueFactor[0]}%)</Label>
+              <Label>Fator de vendas ({revenueFactor[0]}%)</Label>
               <Slider
                 value={revenueFactor}
                 onValueChange={setRevenueFactor}
@@ -221,12 +219,12 @@ const FinancialForecast = () => {
                 className="w-full"
               />
               <p className="text-sm text-muted-foreground">
-                Ajuste o crescimento esperado das receitas
+                Ajuste o crescimento esperado das vendas de piscinas
               </p>
             </div>
             
             <div className="space-y-3">
-              <Label>Fator de despesas ({expenseFactor[0]}%)</Label>
+              <Label>Fator de custos ({expenseFactor[0]}%)</Label>
               <Slider
                 value={expenseFactor}
                 onValueChange={setExpenseFactor}
@@ -236,7 +234,7 @@ const FinancialForecast = () => {
                 className="w-full"
               />
               <p className="text-sm text-muted-foreground">
-                Ajuste a evolução esperada das despesas
+                Ajuste a evolução esperada dos custos operacionais
               </p>
             </div>
           </div>

@@ -15,42 +15,42 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PageHeader from './layout/PageHeader';
 
-// Define monthly data
+// Define monthly data adapted for pool business
 const monthlyData = [
-  { name: 'Jan', income: 8500, expenses: 7200 },
-  { name: 'Fév', income: 9200, expenses: 7800 },
-  { name: 'Mar', income: 8800, expenses: 7400 },
-  { name: 'Avr', income: 10500, expenses: 8100 },
-  { name: 'Mai', income: 11200, expenses: 9500 },
-  { name: 'Juin', income: 9800, expenses: 7900 },
-  { name: 'Juil', income: 12500, expenses: 10200 },
+  { name: 'Jan', income: 85000, expenses: 62000 },
+  { name: 'Fev', income: 92000, expenses: 68000 },
+  { name: 'Mar', income: 88000, expenses: 64000 },
+  { name: 'Abr', income: 105000, expenses: 71000 },
+  { name: 'Mai', income: 112000, expenses: 75000 },
+  { name: 'Jun', income: 98000, expenses: 69000 },
+  { name: 'Jul', income: 125000, expenses: 82000 },
 ];
 
 // Schema for transaction form
 const transactionSchema = z.object({
-  date: z.string().min(1, "La date est requise"),
-  description: z.string().min(3, "Description trop courte"),
+  date: z.string().min(1, "A data é obrigatória"),
+  description: z.string().min(3, "Descrição muito curta"),
   amount: z.string().refine(val => !isNaN(Number(val)) && Number(val) !== 0, {
-    message: "Montant invalide"
+    message: "Valor inválido"
   }),
-  category: z.string().min(1, "La catégorie est requise"),
+  category: z.string().min(1, "A categoria é obrigatória"),
   type: z.enum(["income", "expense"]),
 });
 
 const FinancialTracking = () => {
   // State for editable content
-  const [title, setTitle] = useState('Suivi Financier');
-  const [description, setDescription] = useState('Gérez vos revenus et dépenses pour optimiser la rentabilité de votre exploitation');
+  const [title, setTitle] = useState('Controle Financeiro');
+  const [description, setDescription] = useState('Gerencie receitas e despesas para otimizar a rentabilidade da sua empresa de piscinas');
   
   // State for transactions
   const [transactions, setTransactions] = useState([
-    { id: 1, date: '2023-07-05', description: 'Vente de récolte', amount: 3200, category: 'Ventes', type: 'income' },
-    { id: 2, date: '2023-07-10', description: 'Achat d\'engrais', amount: 850, category: 'Fournitures', type: 'expense' },
-    { id: 3, date: '2023-07-12', description: 'Facture d\'électricité', amount: 320, category: 'Utilities', type: 'expense' },
-    { id: 4, date: '2023-07-15', description: 'Vente de bananes', amount: 1500, category: 'Ventes', type: 'income' },
-    { id: 5, date: '2023-07-20', description: 'Réparation tracteur', amount: 750, category: 'Maintenance', type: 'expense' },
-    { id: 6, date: '2023-07-25', description: 'Subvention agricole', amount: 4200, category: 'Subventions', type: 'income' },
-    { id: 7, date: '2023-07-28', description: 'Salaires employés', amount: 2800, category: 'Salaires', type: 'expense' },
+    { id: 1, date: '2023-07-05', description: 'Venda de piscina de fibra 8x4', amount: 32000, category: 'Vendas', type: 'income' },
+    { id: 2, date: '2023-07-10', description: 'Compra de fibra de vidro', amount: 8500, category: 'Materiais', type: 'expense' },
+    { id: 3, date: '2023-07-12', description: 'Conta de energia elétrica', amount: 1320, category: 'Utilidades', type: 'expense' },
+    { id: 4, date: '2023-07-15', description: 'Venda de spa jacuzzi', amount: 15000, category: 'Vendas', type: 'income' },
+    { id: 5, date: '2023-07-20', description: 'Manutenção de equipamentos', amount: 2750, category: 'Manutenção', type: 'expense' },
+    { id: 6, date: '2023-07-25', description: 'Venda de acessórios para piscina', amount: 4200, category: 'Acessórios', type: 'income' },
+    { id: 7, date: '2023-07-28', description: 'Salários funcionários', amount: 18800, category: 'Folha de Pagamento', type: 'expense' },
   ]);
   
   // Filter and stats
@@ -121,13 +121,13 @@ const FinancialTracking = () => {
     setShowAddDialog(false);
     form.reset();
     
-    toast.success('Transaction ajoutée avec succès');
+    toast.success('Transação adicionada com sucesso');
   };
   
   // Handle delete transaction
   const handleDeleteTransaction = (id: number) => {
     setTransactions(transactions.filter(t => t.id !== id));
-    toast.success('Transaction supprimée');
+    toast.success('Transação removida');
   };
   
   // Handle edit transaction
@@ -135,19 +135,19 @@ const FinancialTracking = () => {
     setTransactions(transactions.map(t => 
       t.id === id ? { ...t, [field]: field === 'amount' ? parseFloat(value) : value } : t
     ));
-    toast.success('Transaction mise à jour');
+    toast.success('Transação atualizada');
   };
   
   // Export to CSV
   const exportToCSV = () => {
     // Create CSV content
-    const headers = ['Date', 'Description', 'Montant', 'Catégorie', 'Type'];
+    const headers = ['Data', 'Descrição', 'Valor', 'Categoria', 'Tipo'];
     const rows = transactions.map(t => [
       t.date, 
       t.description, 
       t.amount.toString(), 
       t.category, 
-      t.type === 'income' ? 'Revenu' : 'Dépense'
+      t.type === 'income' ? 'Receita' : 'Despesa'
     ]);
     
     const csvContent = [
@@ -160,20 +160,20 @@ const FinancialTracking = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `transactions_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute('download', `transacoes_${new Date().toISOString().slice(0,10)}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    toast.success('Données exportées en CSV');
+    toast.success('Dados exportados em CSV');
   };
   
   // Print transactions
   const printTransactions = () => {
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      toast.error('Impossible d\'ouvrir la fenêtre d\'impression');
+      toast.error('Impossível abrir a janela de impressão');
       return;
     }
     
@@ -181,7 +181,7 @@ const FinancialTracking = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Transactions Financières</title>
+          <title>Transações Financeiras - Exclusive Piscinas</title>
           <style>
             body { font-family: Arial, sans-serif; }
             table { width: 100%; border-collapse: collapse; }
@@ -194,30 +194,30 @@ const FinancialTracking = () => {
           </style>
         </head>
         <body>
-          <h1>Transactions Financières</h1>
+          <h1>Transações Financeiras - Exclusive Piscinas</h1>
           <div class="summary">
-            <p>Revenus totaux: <b>${totalIncome.toFixed(2)} €</b></p>
-            <p>Dépenses totales: <b>${totalExpenses.toFixed(2)} €</b></p>
-            <p>Solde: <b class="${balance >= 0 ? 'income' : 'expense'}">${balance.toFixed(2)} €</b></p>
+            <p>Receitas totais: <b>R$ ${totalIncome.toLocaleString('pt-BR')}</b></p>
+            <p>Despesas totais: <b>R$ ${totalExpenses.toLocaleString('pt-BR')}</b></p>
+            <p>Saldo: <b class="${balance >= 0 ? 'income' : 'expense'}">R$ ${balance.toLocaleString('pt-BR')}</b></p>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Montant</th>
-                <th>Catégorie</th>
-                <th>Type</th>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
               </tr>
             </thead>
             <tbody>
               ${transactions.map(t => `
                 <tr>
-                  <td>${new Date(t.date).toLocaleDateString()}</td>
+                  <td>${new Date(t.date).toLocaleDateString('pt-BR')}</td>
                   <td>${t.description}</td>
-                  <td class="${t.type === 'income' ? 'income' : 'expense'}">${t.amount.toFixed(2)} €</td>
+                  <td class="${t.type === 'income' ? 'income' : 'expense'}">R$ ${t.amount.toLocaleString('pt-BR')}</td>
                   <td>${t.category}</td>
-                  <td>${t.type === 'income' ? 'Revenu' : 'Dépense'}</td>
+                  <td>${t.type === 'income' ? 'Receita' : 'Despesa'}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -233,7 +233,7 @@ const FinancialTracking = () => {
     printWindow.document.write(htmlContent);
     printWindow.document.close();
     
-    toast.success('Impression préparée');
+    toast.success('Impressão preparada');
   };
   
   return (
@@ -243,43 +243,43 @@ const FinancialTracking = () => {
         description={description}
         onTitleChange={(value) => {
           setTitle(String(value));
-          toast.success('Titre mis à jour');
+          toast.success('Título atualizado');
         }}
         onDescriptionChange={(value) => {
           setDescription(String(value));
-          toast.success('Description mise à jour');
+          toast.success('Descrição atualizada');
         }}
       />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Revenus</CardTitle>
-            <CardDescription>Total des entrées</CardDescription>
+            <CardTitle className="text-lg">Receitas</CardTitle>
+            <CardDescription>Total de entradas</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-green-600">{totalIncome.toFixed(2)} €</p>
+            <p className="text-2xl font-bold text-green-600">R$ {totalIncome.toLocaleString('pt-BR')}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Dépenses</CardTitle>
-            <CardDescription>Total des sorties</CardDescription>
+            <CardTitle className="text-lg">Despesas</CardTitle>
+            <CardDescription>Total de saídas</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-red-600">{totalExpenses.toFixed(2)} €</p>
+            <p className="text-2xl font-bold text-red-600">R$ {totalExpenses.toLocaleString('pt-BR')}</p>
           </CardContent>
         </Card>
         
         <Card className="bg-white">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Solde</CardTitle>
-            <CardDescription>Revenus - Dépenses</CardDescription>
+            <CardTitle className="text-lg">Saldo</CardTitle>
+            <CardDescription>Receitas - Despesas</CardDescription>
           </CardHeader>
           <CardContent>
             <p className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {balance.toFixed(2)} €
+              R$ {balance.toLocaleString('pt-BR')}
             </p>
           </CardContent>
         </Card>
@@ -288,7 +288,7 @@ const FinancialTracking = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-white">
           <CardHeader>
-            <CardTitle>Aperçu Mensuel</CardTitle>
+            <CardTitle>Visão Geral Mensal</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -301,11 +301,11 @@ const FinancialTracking = () => {
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip 
-                    formatter={(value) => [`${value} €`, '']} 
-                    labelFormatter={(label) => `Mois: ${label}`}
+                    formatter={(value) => [`R$ ${value.toLocaleString('pt-BR')}`, '']} 
+                    labelFormatter={(label) => `Mês: ${label}`}
                   />
-                  <Bar name="Revenus" dataKey="income" fill="#4ade80" radius={[4, 4, 0, 0]} />
-                  <Bar name="Dépenses" dataKey="expenses" fill="#f87171" radius={[4, 4, 0, 0]} />
+                  <Bar name="Receitas" dataKey="income" fill="#4ade80" radius={[4, 4, 0, 0]} />
+                  <Bar name="Despesas" dataKey="expenses" fill="#f87171" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -314,7 +314,7 @@ const FinancialTracking = () => {
         
         <Card className="bg-white">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Transactions Récentes</CardTitle>
+            <CardTitle>Transações Recentes</CardTitle>
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
@@ -322,7 +322,7 @@ const FinancialTracking = () => {
                 onClick={exportToCSV}
               >
                 <Download className="h-4 w-4 mr-1" />
-                Exporter
+                Exportar
               </Button>
               <Button 
                 variant="outline" 
@@ -330,14 +330,14 @@ const FinancialTracking = () => {
                 onClick={printTransactions}
               >
                 <Printer className="h-4 w-4 mr-1" />
-                Imprimer
+                Imprimir
               </Button>
               <Button 
                 onClick={() => setShowAddDialog(true)}
                 size="sm"
               >
                 <PlusCircle className="h-4 w-4 mr-1" />
-                Ajouter
+                Adicionar
               </Button>
             </div>
           </CardHeader>
@@ -348,9 +348,9 @@ const FinancialTracking = () => {
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
               >
-                <option value="all">Tous types</option>
-                <option value="income">Revenus</option>
-                <option value="expense">Dépenses</option>
+                <option value="all">Todos os tipos</option>
+                <option value="income">Receitas</option>
+                <option value="expense">Despesas</option>
               </select>
               
               <select
@@ -360,7 +360,7 @@ const FinancialTracking = () => {
               >
                 {categories.map(cat => (
                   <option key={cat} value={cat}>
-                    {cat === 'all' ? 'Toutes catégories' : cat}
+                    {cat === 'all' ? 'Todas as categorias' : cat}
                   </option>
                 ))}
               </select>
@@ -374,10 +374,10 @@ const FinancialTracking = () => {
                   setSortOrder(order as 'asc' | 'desc');
                 }}
               >
-                <option value="date-desc">Date (récent)</option>
-                <option value="date-asc">Date (ancien)</option>
-                <option value="amount-desc">Montant (haut)</option>
-                <option value="amount-asc">Montant (bas)</option>
+                <option value="date-desc">Data (recente)</option>
+                <option value="date-asc">Data (antigo)</option>
+                <option value="amount-desc">Valor (maior)</option>
+                <option value="amount-asc">Valor (menor)</option>
               </select>
             </div>
             
@@ -394,7 +394,7 @@ const FinancialTracking = () => {
                     <div className="flex-1">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                         <EditableField
-                          value={new Date(transaction.date).toLocaleDateString()}
+                          value={new Date(transaction.date).toLocaleDateString('pt-BR')}
                           type="date"
                           onSave={(value) => handleUpdateTransaction(
                             transaction.id, 
@@ -419,7 +419,7 @@ const FinancialTracking = () => {
                     
                     <div className="flex items-center gap-3">
                       <EditableField
-                        value={transaction.amount}
+                        value={`R$ ${transaction.amount.toLocaleString('pt-BR')}`}
                         type="number"
                         onSave={(value) => handleUpdateTransaction(transaction.id, 'amount', value)}
                         className={`font-semibold ${
@@ -438,7 +438,7 @@ const FinancialTracking = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-muted-foreground py-8">Aucune transaction trouvée</p>
+                <p className="text-center text-muted-foreground py-8">Nenhuma transação encontrada</p>
               )}
             </div>
           </CardContent>
@@ -449,7 +449,7 @@ const FinancialTracking = () => {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Ajouter une transaction</DialogTitle>
+            <DialogTitle>Adicionar Transação</DialogTitle>
           </DialogHeader>
           
           <Form {...form}>
@@ -460,7 +460,7 @@ const FinancialTracking = () => {
                   name="type"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Type de transaction</FormLabel>
+                      <FormLabel>Tipo de transação</FormLabel>
                       <div className="flex mt-1">
                         <Button
                           type="button"
@@ -468,7 +468,7 @@ const FinancialTracking = () => {
                           className={field.value === 'income' ? 'bg-green-600 hover:bg-green-700' : ''}
                           onClick={() => field.onChange('income')}
                         >
-                          Revenu
+                          Receita
                         </Button>
                         <Button
                           type="button"
@@ -476,7 +476,7 @@ const FinancialTracking = () => {
                           className={`ml-2 ${field.value === 'expense' ? 'bg-red-600 hover:bg-red-700' : ''}`}
                           onClick={() => field.onChange('expense')}
                         >
-                          Dépense
+                          Despesa
                         </Button>
                       </div>
                       <FormMessage />
@@ -489,7 +489,7 @@ const FinancialTracking = () => {
                   name="date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>Data</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
@@ -509,12 +509,12 @@ const FinancialTracking = () => {
                   name="amount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Montant (€)</FormLabel>
+                      <FormLabel>Valor (R$)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
                           step="0.01" 
-                          placeholder="0.00" 
+                          placeholder="0,00" 
                           {...field} 
                         />
                       </FormControl>
@@ -528,9 +528,9 @@ const FinancialTracking = () => {
                   name="category"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Catégorie</FormLabel>
+                      <FormLabel>Categoria</FormLabel>
                       <FormControl>
-                        <Input placeholder="Exemple: Ventes, Fournitures..." {...field} />
+                        <Input placeholder="Ex: Vendas, Materiais, Equipamentos..." {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -542,9 +542,9 @@ const FinancialTracking = () => {
                   name="description"
                   render={({ field }) => (
                     <FormItem className="col-span-2">
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Descrição</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input placeholder="Ex: Venda de piscina 8x4 com acessórios" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -558,9 +558,9 @@ const FinancialTracking = () => {
                   variant="outline" 
                   onClick={() => setShowAddDialog(false)}
                 >
-                  Annuler
+                  Cancelar
                 </Button>
-                <Button type="submit">Ajouter</Button>
+                <Button type="submit">Adicionar</Button>
               </DialogFooter>
             </form>
           </Form>
