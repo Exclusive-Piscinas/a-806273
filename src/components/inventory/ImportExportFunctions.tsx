@@ -32,10 +32,8 @@ export const exportInventoryToCSV = (
   options: ExportOptions = {}
 ) => {
   try {
-    // Process data based on options
     let dataToExport = [...inventoryData];
     
-    // Filter fields if specified
     if (options.includeFields?.length) {
       dataToExport = dataToExport.map(item => {
         const filteredItem: Record<string, any> = {};
@@ -63,7 +61,6 @@ export const exportInventoryToCSV = (
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     
-    // Create filename
     const timestamp = options.addTimestamp ? `_${new Date().toISOString().replace(/[:.]/g, '-')}` : '';
     const defaultName = `estoque${timestamp}.csv`;
     const fileName = options.fileName || defaultName;
@@ -76,13 +73,13 @@ export const exportInventoryToCSV = (
     link.click();
     document.body.removeChild(link);
     
-    toast.success("Dados exportados com sucesso", {
+    toast.success("Estoque exportado com sucesso", {
       description: `O arquivo ${fileName} foi baixado`
     });
     return true;
   } catch (error) {
     console.error("Erro na exportação:", error);
-    toast.error("Erro ao exportar os dados");
+    toast.error("Erro ao exportar dados do estoque");
     return false;
   }
 };
@@ -108,22 +105,18 @@ export const importInventoryFromCSV = (
       complete: (results) => {
         const parsedData = results.data as any[];
         
-        // Check if there's data to process
         if (!parsedData || parsedData.length === 0 || !parsedData[0]) {
           toast.error("O arquivo importado não contém dados válidos");
           return;
         }
 
-        // Track progress
         let processedCount = 0;
         const totalCount = parsedData.length;
         
-        // Validate and transform data
         const validData: InventoryItem[] = parsedData
           .filter(item => {
             if (!validateFields) return true;
             
-            // Check required fields
             const hasRequiredFields = requiredFields.every(field => 
               item[field] !== undefined && item[field] !== null && item[field] !== ''
             );
@@ -135,7 +128,6 @@ export const importInventoryFromCSV = (
             return hasRequiredFields;
           })
           .map((item, index) => {
-            // Update progress
             processedCount++;
             if (options.onProgress) {
               options.onProgress(Math.floor((processedCount / totalCount) * 100));
@@ -164,29 +156,27 @@ export const importInventoryFromCSV = (
         }
         
         onComplete(validData);
-        toast.success(`${validData.length} artigos importados com sucesso`, {
+        toast.success(`${validData.length} itens importados com sucesso`, {
           description: `Importação finalizada de ${file.name}`
         });
       },
       error: (error) => {
         console.error("Erro na importação:", error);
-        toast.error("Erro ao importar os dados");
+        toast.error("Erro ao importar dados do estoque");
       }
     });
     return true;
   } catch (error) {
     console.error("Erro na importação:", error);
-    toast.error("Erro ao importar os dados");
+    toast.error("Erro ao importar dados do estoque");
     return false;
   }
 };
 
 export const exportInventoryToPDF = (inventoryData: InventoryItem[], fileName?: string) => {
-  toast.info("Preparando o PDF...");
-  // In a real app, you would use a library like jsPDF, pdfmake, or react-pdf
-  // This is a placeholder for the actual PDF generation functionality
+  toast.info("Preparando o PDF do estoque...");
   setTimeout(() => {
-    toast.success("PDF gerado com sucesso", {
+    toast.success("PDF do estoque gerado com sucesso", {
       description: "O arquivo foi baixado"
     });
   }, 1500);
@@ -207,7 +197,7 @@ export const downloadInventoryTemplate = () => {
       supplier: "Fornecedor",
       sku: "REF-001",
       expiryDate: "2023-12-31",
-      notes: "Observações adicionais"
+      notes: "Observações"
     }
   ];
   

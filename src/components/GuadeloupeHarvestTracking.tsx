@@ -21,21 +21,8 @@ const GuadeloupeHarvestTracking = () => {
   const [title, setTitle] = useState('Acompanhamento de Vendas de Piscinas');
   const [description, setDescription] = useState('Acompanhe as vendas e qualidade dos produtos para os principais tipos de piscinas');
   
-  // Converter os dados de rendimento para se adaptar ao formato esperado
-  const [salesData, setSalesData] = useState<SalesData[]>(
-    yieldData.map(item => ({
-      product: item.name,
-      currentSales: item.current,
-      previousSales: item.previous,
-      unit: item.unit,
-      targetMarket: item.name === 'Piscinas Pequenas' ? 125 :
-                   item.name === 'Piscinas Médias' ? 45 :
-                   item.name === 'Piscinas Grandes' ? 25 :
-                   item.name === 'Spas' ? 30 : 250,
-      quality: item.name === 'Piscinas Médias' ? 'Excelente' :
-               item.name === 'Piscinas Grandes' || item.name === 'Piscinas Pequenas' || item.name === 'Acessórios' ? 'Boa' : 'Média'
-    }))
-  );
+  // Estado inicial vazio para vendas
+  const [salesData, setSalesData] = useState<SalesData[]>([]);
   
   // Colunas para a tabela editável
   const columns: Column[] = [
@@ -151,58 +138,72 @@ const GuadeloupeHarvestTracking = () => {
           />
         </div>
         
-        <div className="h-80 mb-6">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip 
-                formatter={(value, name, props) => {
-                  if (name === 'diferenca') {
-                    return [`${Number(value) > 0 ? '+' : ''}${value} ${props.payload.unidade}`, 'Evolução'];
-                  }
-                  return [`${value} ${props.payload.unidade}`, name];
-                }}
-              />
-              <Legend />
-              <Bar name="Vendas atuais" dataKey="atual" fill="#4CAF50" />
-              <Bar name="Vendas anteriores" dataKey="anterior" fill="#8D6E63" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {salesData.map(item => {
-            const change = item.currentSales - item.previousSales;
-            const changePercent = ((change / item.previousSales) * 100).toFixed(1);
-            const isPositive = change >= 0;
+        {salesData.length > 0 ? (
+          <>
+            <div className="h-80 mb-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value, name, props) => {
+                      if (name === 'diferenca') {
+                        return [`${Number(value) > 0 ? '+' : ''}${value} ${props.payload.unidade}`, 'Evolução'];
+                      }
+                      return [`${value} ${props.payload.unidade}`, name];
+                    }}
+                  />
+                  <Legend />
+                  <Bar name="Vendas atuais" dataKey="atual" fill="#4CAF50" />
+                  <Bar name="Vendas anteriores" dataKey="anterior" fill="#8D6E63" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
             
-            return (
-              <div key={item.product} className="bg-muted/30 rounded-lg p-4 border">
-                <h3 className="font-medium mb-1 flex items-center">
-                  <Package className="h-4 w-4 mr-1.5 text-blue-500" />
-                  {item.product}
-                </h3>
-                <div className="text-2xl font-bold">{item.currentSales} {item.unit}</div>
-                <div className={`text-sm flex items-center ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                  {isPositive ? (
-                    <ArrowUp className="h-3 w-3 mr-1" />
-                  ) : (
-                    <ArrowDown className="h-3 w-3 mr-1" />
-                  )}
-                  <span>{isPositive ? '+' : ''}{change} {item.unit} ({isPositive ? '+' : ''}{changePercent}%)</span>
-                </div>
-                <div className="mt-2 text-xs text-muted-foreground">
-                  Qualidade: <span className="font-medium">{item.quality}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {salesData.map(item => {
+                const change = item.currentSales - item.previousSales;
+                const changePercent = item.previousSales > 0 ? ((change / item.previousSales) * 100).toFixed(1) : '0';
+                const isPositive = change >= 0;
+                
+                return (
+                  <div key={item.product} className="bg-muted/30 rounded-lg p-4 border">
+                    <h3 className="font-medium mb-1 flex items-center">
+                      <Package className="h-4 w-4 mr-1.5 text-blue-500" />
+                      {item.product}
+                    </h3>
+                    <div className="text-2xl font-bold">{item.currentSales} {item.unit}</div>
+                    <div className={`text-sm flex items-center ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                      {isPositive ? (
+                        <ArrowUp className="h-3 w-3 mr-1" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3 mr-1" />
+                      )}
+                      <span>{isPositive ? '+' : ''}{change} {item.unit} ({isPositive ? '+' : ''}{changePercent}%)</span>
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      Qualidade: <span className="font-medium">{item.quality}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-muted-foreground mb-2">
+              Nenhum dado de vendas disponível
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Adicione produtos na tabela abaixo para começar o acompanhamento
+            </p>
+          </div>
+        )}
         
         <EditableTable
           data={salesData}

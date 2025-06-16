@@ -81,7 +81,7 @@ const TaskList = () => {
       priority: 'Média'
     });
     setShowAddTask(false);
-    console.log('Nova tarefa adicionada com sucesso');
+    console.log('Nova tarefa de manutenção adicionada');
   };
 
   return (
@@ -89,7 +89,7 @@ const TaskList = () => {
       <div className="p-4 flex items-center justify-between border-b">
         <div className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-blue-600" />
-          <h2 className="text-xl font-semibold">Tarefas Pendentes</h2>
+          <h2 className="text-xl font-semibold">Tarefas de Manutenção</h2>
         </div>
         <Button 
           onClick={() => setShowAddTask(!showAddTask)}
@@ -104,13 +104,13 @@ const TaskList = () => {
         <div className="p-4 bg-muted/20 border-b">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="text-sm font-medium mb-1 block">Tarefa</label>
+              <label className="text-sm font-medium mb-1 block">Descrição da Tarefa</label>
               <input
                 type="text"
                 value={newTask.task}
                 onChange={(e) => setNewTask({...newTask, task: e.target.value})}
                 className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Descrição da tarefa"
+                placeholder="Ex: Limpeza da piscina"
               />
             </div>
             <div>
@@ -129,7 +129,7 @@ const TaskList = () => {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Data</label>
+              <label className="text-sm font-medium mb-1 block">Data Prevista</label>
               <input
                 type="date"
                 value={newTask.date}
@@ -155,7 +155,7 @@ const TaskList = () => {
               Cancelar
             </Button>
             <Button onClick={handleAddTask}>
-              Adicionar
+              Adicionar Tarefa
             </Button>
           </div>
         </div>
@@ -178,7 +178,7 @@ const TaskList = () => {
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                   <div className="flex flex-col items-center space-y-2">
                     <Calendar className="h-12 w-12 text-gray-300" />
-                    <p>Nenhuma tarefa cadastrada</p>
+                    <p>Nenhuma tarefa de manutenção cadastrada</p>
                     <p className="text-sm">Adicione uma nova tarefa para começar</p>
                   </div>
                 </TableCell>

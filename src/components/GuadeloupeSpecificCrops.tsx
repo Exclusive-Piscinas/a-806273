@@ -22,12 +22,12 @@ const GuadeloupeSpecificCrops = () => {
   const { exportModuleData, importModuleData, getModuleData } = useCRM();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
-  // Get cultures data for preview/print
-  const culturesData = getModuleData('cultures').items || [];
+  // Get cultures data for preview/print - EMPTY INITIAL STATE
+  const culturesData = [];
 
   const handleAddCulture = () => {
     setShowAddForm(true);
-    console.log("Abertura do formulário de adição de produto/serviço");
+    console.log("Abertura do formulário de adição de piscina");
   };
 
   const handleExportData = async (format: 'csv' | 'pdf' = 'csv') => {
@@ -35,7 +35,7 @@ const GuadeloupeSpecificCrops = () => {
     const success = await exportModuleData('cultures', format);
     
     if (success) {
-      console.log(`Os dados dos produtos/serviços foram exportados em ${format.toUpperCase()}`);
+      console.log(`Os dados das piscinas foram exportados em ${format.toUpperCase()}`);
     }
   };
 
@@ -52,17 +52,18 @@ const GuadeloupeSpecificCrops = () => {
       const success = await importModuleData('cultures', file);
       
       if (success) {
-        console.log("Importação bem-sucedida - Os dados dos produtos/serviços foram atualizados");
+        console.log("Importação bem-sucedida - Os dados das piscinas foram atualizados");
       }
     }
   };
 
   const filterOptions = [
-    { value: 'all', label: 'Todos os produtos' },
-    { value: 'pools', label: 'Piscinas' },
-    { value: 'accessories', label: 'Acessórios' },
-    { value: 'maintenance', label: 'Manutenção' },
-    { value: 'equipment', label: 'Equipamentos' }
+    { value: 'all', label: 'Todas as piscinas' },
+    { value: 'pequena', label: 'Piscinas Pequenas' },
+    { value: 'media', label: 'Piscinas Médias' },
+    { value: 'grande', label: 'Piscinas Grandes' },
+    { value: 'olimpica', label: 'Piscinas Olímpicas' },
+    { value: 'spa', label: 'Spas/Jacuzzis' }
   ];
 
   return (
@@ -74,19 +75,19 @@ const GuadeloupeSpecificCrops = () => {
     >
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-bold">Produtos e Serviços de Piscinas</h2>
-          <p className="text-muted-foreground">Gerencie as informações sobre seus produtos e serviços</p>
+          <h2 className="text-xl font-bold">Gestão de Piscinas</h2>
+          <p className="text-muted-foreground">Gerencie seus projetos e tipos de piscinas</p>
         </div>
         <div className="flex space-x-2">
           <PreviewPrintButton 
             data={culturesData}
             moduleName="cultures"
-            title="Produtos e Serviços de Piscinas"
+            title="Gestão de Piscinas"
             columns={[
               { key: "nome", header: "Nome" },
-              { key: "categoria", header: "Categoria" },
-              { key: "preco", header: "Preço" },
-              { key: "disponibilidade", header: "Disponibilidade" }
+              { key: "tipo", header: "Tipo" },
+              { key: "tamanho", header: "Tamanho" },
+              { key: "status", header: "Status" }
             ]}
           />
           
@@ -135,7 +136,7 @@ const GuadeloupeSpecificCrops = () => {
             className="transition-colors hover:bg-green-700"
           >
             <Plus className="mr-2 h-4 w-4" />
-            Adicionar produto
+            Adicionar Piscina
           </Button>
         </div>
       </div>
@@ -145,7 +146,7 @@ const GuadeloupeSpecificCrops = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             type="text" 
-            placeholder="Pesquisar produto..." 
+            placeholder="Pesquisar piscina..." 
             className="pl-10 transition-all focus:border-green-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

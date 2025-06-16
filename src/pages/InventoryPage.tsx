@@ -38,17 +38,17 @@ const InventoryPage = () => {
     handleTitleChange, 
     handleDescriptionChange 
   } = usePageMetadata({
-    defaultTitle: 'Gestão de Estoque e Produtos',
-    defaultDescription: 'Gerencie seu estoque e acompanhe os níveis de produtos para piscinas'
+    defaultTitle: 'Gestão de Estoque',
+    defaultDescription: 'Gerencie seu estoque de materiais e equipamentos para piscinas'
   });
 
   const handleExportData = () => {
     if (activeTab === 'inventory') {
       console.log("Exportação de dados de estoque iniciada");
-    } else if (activeTab === 'crops') {
-      console.log("Exportação de dados de produtos");
-    } else if (activeTab === 'weather') {
-      console.log("Exportação de dados climáticos");
+    } else if (activeTab === 'pools') {
+      console.log("Exportação de dados de piscinas");
+    } else if (activeTab === 'maintenance') {
+      console.log("Exportação de dados de manutenção");
     }
   };
 
@@ -64,23 +64,21 @@ const InventoryPage = () => {
 
     console.log(`Importação do arquivo ${file.name}`);
     
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
   const handleAddItem = () => {
-    const actionText = activeTab === 'inventory' ? 'estoque' : 
-                      activeTab === 'crops' ? 'produto' : 
-                      activeTab === 'weather' ? 'alerta' : 'item';
+    const actionText = activeTab === 'inventory' ? 'item de estoque' : 
+                      activeTab === 'pools' ? 'piscina' : 
+                      activeTab === 'maintenance' ? 'manutenção' : 'item';
                       
     console.log(`Funcionalidade de adição de ${actionText} ativada`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    // Pass the search term to the active component using context or props
   };
 
   const handleDownloadTemplate = () => {
@@ -143,9 +141,9 @@ const InventoryPage = () => {
           className="whitespace-nowrap transition-colors hover:bg-green-700"
         >
           <Plus className="mr-2 h-4 w-4" />
-          {activeTab === 'inventory' ? 'Adicionar Estoque' : 
-           activeTab === 'crops' ? 'Adicionar Produto' : 
-           activeTab === 'weather' ? 'Adicionar Alerta' : 'Adicionar'}
+          {activeTab === 'inventory' ? 'Adicionar Item' : 
+           activeTab === 'pools' ? 'Adicionar Piscina' : 
+           activeTab === 'maintenance' ? 'Adicionar Manutenção' : 'Adicionar'}
         </Button>
       </div>
     );
@@ -160,7 +158,7 @@ const InventoryPage = () => {
       >
         <div className="relative flex-grow">
           <Input 
-            placeholder={`Pesquisar em ${activeTab === 'inventory' ? 'estoque' : activeTab === 'crops' ? 'produtos' : 'alertas'}`} 
+            placeholder={`Pesquisar em ${activeTab === 'inventory' ? 'estoque' : activeTab === 'pools' ? 'piscinas' : 'manutenções'}`} 
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-8"
@@ -187,7 +185,7 @@ const InventoryPage = () => {
     );
   };
 
-  const cropsContent = (
+  const poolsContent = (
     <StatisticsProvider>
       <div className="space-y-8">
         <GuadeloupeSpecificCrops />
@@ -203,13 +201,13 @@ const InventoryPage = () => {
       content: <Inventory dateRange={dateRange} searchTerm={searchTerm} />
     },
     {
-      value: 'crops',
-      label: 'Produtos',
-      content: cropsContent
+      value: 'pools',
+      label: 'Piscinas',
+      content: poolsContent
     },
     {
-      value: 'weather',
-      label: 'Condições',
+      value: 'maintenance',
+      label: 'Manutenção',
       content: <GuadeloupeWeatherAlerts />
     }
   ];
@@ -219,8 +217,8 @@ const InventoryPage = () => {
     
     const tabLabels = {
       inventory: 'o Estoque',
-      crops: 'os Produtos',
-      weather: 'as Condições'
+      pools: 'as Piscinas',
+      maintenance: 'a Manutenção'
     };
     
     console.log(`Você está visualizando agora ${tabLabels[value as keyof typeof tabLabels] || value}`);

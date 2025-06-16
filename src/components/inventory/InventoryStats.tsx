@@ -10,8 +10,8 @@ interface InventoryStatsProps {
 }
 
 const InventoryStats: React.FC<InventoryStatsProps> = ({ 
-  inventoryData,
-  categoryStats
+  inventoryData = [],
+  categoryStats = []
 }) => {
   const getTotalInventoryValue = () => {
     return inventoryData.reduce((sum, item) => sum + (item.quantity * item.price), 0);
@@ -39,7 +39,7 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Valor Total</CardTitle>
+            <CardTitle className="text-lg">Valor Total do Estoque</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">
@@ -53,13 +53,13 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
         
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Artigos</CardTitle>
+            <CardTitle className="text-lg">Itens em Estoque</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col">
               <p className="text-3xl font-bold">{inventoryData.length}</p>
               <p className="text-muted-foreground">
-                {getLowStockItems()} a reabastecer
+                {getLowStockItems()} precisam de reposição
               </p>
             </div>
           </CardContent>
@@ -67,7 +67,7 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
         
         <Card className="bg-white rounded-xl border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Estado do Estoque</CardTitle>
+            <CardTitle className="text-lg">Status do Estoque</CardTitle>
           </CardHeader>
           <CardContent>
             <p className={`text-3xl font-bold ${healthStatus.color}`}>{healthStatus.label}</p>
@@ -108,7 +108,12 @@ const InventoryStats: React.FC<InventoryStatsProps> = ({
               </ResponsiveContainer>
             ) : (
               <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground">Nenhum dado disponível para exibir</p>
+                <div className="text-center">
+                  <p className="text-muted-foreground">Nenhum item em estoque</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Adicione itens ao estoque para visualizar estatísticas
+                  </p>
+                </div>
               </div>
             )}
           </div>
