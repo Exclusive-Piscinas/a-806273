@@ -55,11 +55,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     
     if (error) {
-      toast.error('Erro ao fazer login', {
+      // Get current language from localStorage for toast messages
+      const currentLanguage = localStorage.getItem('language') || 'pt';
+      const errorMessage = currentLanguage === 'en' ? 'Login error' : 'Erro ao fazer login';
+      toast.error(errorMessage, {
         description: error.message
       });
     } else {
-      toast.success('Login realizado com sucesso!');
+      const currentLanguage = localStorage.getItem('language') || 'pt';
+      const successMessage = currentLanguage === 'en' ? 'Login successful!' : 'Login realizado com sucesso!';
+      toast.success(successMessage);
     }
     
     return { error };
@@ -80,12 +85,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     
     if (error) {
-      toast.error('Erro ao criar conta', {
+      const currentLanguage = localStorage.getItem('language') || 'pt';
+      const errorMessage = currentLanguage === 'en' ? 'Error creating account' : 'Erro ao criar conta';
+      toast.error(errorMessage, {
         description: error.message
       });
     } else {
-      toast.success('Conta criada com sucesso!', {
-        description: 'Verifique seu email para confirmar a conta.'
+      const currentLanguage = localStorage.getItem('language') || 'pt';
+      const successMessage = currentLanguage === 'en' ? 'Account created successfully!' : 'Conta criada com sucesso!';
+      const successDescription = currentLanguage === 'en' ? 'Check your email to confirm your account.' : 'Verifique seu email para confirmar a conta.';
+      toast.success(successMessage, {
+        description: successDescription
       });
     }
     
@@ -94,12 +104,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    const currentLanguage = localStorage.getItem('language') || 'pt';
+    
     if (error) {
-      toast.error('Erro ao sair', {
+      const errorMessage = currentLanguage === 'en' ? 'Error logging out' : 'Erro ao sair';
+      toast.error(errorMessage, {
         description: error.message
       });
     } else {
-      toast.success('Logout realizado com sucesso!');
+      const successMessage = currentLanguage === 'en' ? 'Logout successful!' : 'Logout realizado com sucesso!';
+      toast.success(successMessage);
     }
   };
 

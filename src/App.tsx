@@ -17,6 +17,7 @@ import { CRMProvider } from "./contexts/CRMContext";
 import { StatisticsProvider } from "./contexts/StatisticsContext";
 import { AppSettingsProvider } from "./contexts/AppSettingsContext";
 import { AuthProvider } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { trackPageView } from "./utils/analytics";
 
@@ -67,33 +68,35 @@ const RouterChangeHandler = () => {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppSettingsProvider>
-          <CRMProvider>
-            <BrowserRouter>
-              <TooltipProvider>
-                <RouterChangeHandler />
-                <Routes>
-                  {routes.map((route) => (
-                    <Route 
-                      key={route.path} 
-                      path={route.path} 
-                      element={
-                        route.protected ? (
-                          <ProtectedRoute>{route.element}</ProtectedRoute>
-                        ) : (
-                          route.element
-                        )
-                      } 
-                    />
-                  ))}
-                </Routes>
-                <Toaster />
-              </TooltipProvider>
-            </BrowserRouter>
-          </CRMProvider>
-        </AppSettingsProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <AppSettingsProvider>
+            <CRMProvider>
+              <BrowserRouter>
+                <TooltipProvider>
+                  <RouterChangeHandler />
+                  <Routes>
+                    {routes.map((route) => (
+                      <Route 
+                        key={route.path} 
+                        path={route.path} 
+                        element={
+                          route.protected ? (
+                            <ProtectedRoute>{route.element}</ProtectedRoute>
+                          ) : (
+                            route.element
+                          )
+                        } 
+                      />
+                    ))}
+                  </Routes>
+                  <Toaster />
+                </TooltipProvider>
+              </BrowserRouter>
+            </CRMProvider>
+          </AppSettingsProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

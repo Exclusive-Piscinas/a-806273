@@ -18,13 +18,16 @@ import {
   LogOut
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
+import LanguageSelector from './LanguageSelector';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
   
   // Fechar menu mobile quando a rota muda
   useEffect(() => {
@@ -56,14 +59,14 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { title: 'Painel Principal', path: '/', icon: Home },
-    { title: 'Piscinas', path: '/parcelles', icon: MapPin },
-    { title: 'Manutenções', path: '/cultures', icon: Sprout },
-    { title: 'Estoque', path: '/inventaire', icon: Package },
-    { title: 'Financeiro', path: '/finances', icon: Wallet },
-    { title: 'Relatórios', path: '/statistiques', icon: BarChart2 },
-    { title: 'Documentos', path: '/rapports', icon: FileText },
-    { title: 'Configurações', path: '/parametres', icon: Settings },
+    { title: t('nav.dashboard'), path: '/', icon: Home },
+    { title: t('nav.pools'), path: '/parcelles', icon: MapPin },
+    { title: t('nav.maintenance'), path: '/cultures', icon: Sprout },
+    { title: t('nav.inventory'), path: '/inventaire', icon: Package },
+    { title: t('nav.finance'), path: '/finances', icon: Wallet },
+    { title: t('nav.reports'), path: '/statistiques', icon: BarChart2 },
+    { title: t('nav.documents'), path: '/rapports', icon: FileText },
+    { title: t('nav.settings'), path: '/parametres', icon: Settings },
   ];
 
   const isActive = (path: string) => {
@@ -79,7 +82,7 @@ const Navbar = () => {
         <button 
           onClick={toggleSidebar} 
           className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-all active:scale-95 dark:bg-gray-800 dark:hover:bg-gray-700"
-          aria-label="Alternar navegação"
+          aria-label={t('nav.toggleNav')}
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -91,25 +94,28 @@ const Navbar = () => {
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         } md:relative md:translate-x-0 flex flex-col h-full overflow-y-auto`}
       >
-        <div className="p-4 border-b border-border flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <img 
-              src="/exclusive-piscinas-logo.png" 
-              alt="Exclusive Piscinas" 
-              className="h-8 w-8"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <span className="text-lg font-bold text-foreground">Exclusive Piscinas</span>
-          </Link>
-          <button 
-            onClick={toggleTheme} 
-            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Alternar tema"
-          >
-            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center justify-between mb-3">
+            <Link to="/" className="flex items-center space-x-2">
+              <img 
+                src="/exclusive-piscinas-logo.png" 
+                alt="Exclusive Piscinas" 
+                className="h-8 w-8"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              <span className="text-lg font-bold text-foreground">Exclusive Piscinas</span>
+            </Link>
+            <button 
+              onClick={toggleTheme} 
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label={t('nav.toggleTheme')}
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
+          <LanguageSelector />
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
@@ -145,7 +151,7 @@ const Navbar = () => {
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Usuário</p>
+              <p className="text-sm font-medium truncate">{t('nav.user')}</p>
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
           </div>
@@ -156,7 +162,7 @@ const Navbar = () => {
             className="w-full flex items-center gap-2"
           >
             <LogOut className="h-4 w-4" />
-            Sair
+            {t('nav.logout')}
           </Button>
         </div>
       </aside>
