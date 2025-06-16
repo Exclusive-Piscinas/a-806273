@@ -1,226 +1,263 @@
 
-import React, { useState, useEffect } from 'react';
-import { DateRange } from 'react-day-picker';
-import { addDays, subDays } from 'date-fns';
-import PageLayout from '../components/layout/PageLayout';
-import ParcelManagement from '../components/ParcelManagement';
-import PageHeader from '../components/layout/PageHeader';
-import usePageMetadata from '../hooks/use-page-metadata';
-import ParcelFilters from '../components/parcels/ParcelFilters';
-import ParcelActionButtons from '../components/parcels/ParcelActionButtons';
-import ParcelMapDialog from '../components/parcels/ParcelMapDialog';
-import ParcelImportDialog from '../components/parcels/ParcelImportDialog';
-import GuadeloupeParcelManagement from '../components/GuadeloupeParcelManagement';
-import { useCRM } from '../contexts/CRMContext';
-import { FileSpreadsheet, FileBarChart2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { Plus, Search, Filter, Grid, List } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import PageLayout from '@/components/layout/PageLayout';
+import PoolCard from '@/components/pools/PoolCard';
+import PoolForm from '@/components/pools/PoolForm';
+import { usePools, PoolProject } from '@/hooks/use-pools';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ParcelsPage = () => {
-  const { 
-    title, 
-    description, 
-    handleTitleChange, 
-    handleDescriptionChange 
-  } = usePageMetadata({
-    defaultTitle: 'Gestion des Parcelles',
-    defaultDescription: 'Gérez, organisez et optimisez toutes vos parcelles agricoles'
-  });
-
+  const { pools, loading, addPool, updatePool, deletePool } = usePools();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingPool, setEditingPool] = useState<PoolProject | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterType, setFilterType] = useState('all');
-  const [mapPreviewOpen, setMapPreviewOpen] = useState(false);
-  const [importDialogOpen, setImportDialogOpen] = useState(false);
-  const [statsDialogOpen, setStatsDialogOpen] = useState(false);
-  const [layersDialogOpen, setLayersDialogOpen] = useState(false);
-  const [weatherAlertsOpen, setWeatherAlertsOpen] = useState(false);
-  const [showGuadeloupeView, setShowGuadeloupeView] = useState(true);
-  const [lastSyncDate, setLastSyncDate] = useState<Date>(new Date());
-  const { syncDataAcrossCRM } = useCRM();
-  const [areaRange, setAreaRange] = useState<[number, number]>([0, 50]);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: subDays(new Date(), 30),
-    to: new Date(),
-  });
-  
-  const [activeParcelAlerts, setActiveParcelAlerts] = useState([
-    { id: 1, parcel: 'Parcelle A12', type: 'Pluie intense', severity: 'Haute' },
-    { id: 2, parcel: 'Parcelle B05', type: 'Sécheresse', severity: 'Moyenne' }
-  ]);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  // Simuler la synchronisation des données avec les autres modules
-  useEffect(() => {
-    const syncWithOtherModules = () => {
-      console.log("Synchronisation des données avec les modules de cultures et de statistiques");
-      
-      // Simule un délai de synchronisation
-      const timer = setTimeout(() => {
-        setLastSyncDate(new Date());
-        syncDataAcrossCRM();
-        console.log("Les données des parcelles sont maintenant synchronisées avec tous les modules");
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    };
+  const filteredPools = pools.filter(pool => {
+    const matchesSearch = pool.nome_cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         pool.endereco?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         pool.email_cliente?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    syncWithOtherModules();
-  }, [syncDataAcrossCRM]);
+    const matchesStatus = statusFilter === 'all' || pool.status === statusFilter;
+    const matchesType = typeFilter === 'all' || pool.tipo_piscina === typeFilter;
+    
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
-  const handleExportData = () => {
-    console.log("L'export de toutes les données des parcelles a démarré");
-    console.log("Les données exportées sont maintenant disponibles dans le module Statistiques");
+  const handleAddPool = () => {
+    setEditingPool(null);
+    setIsFormOpen(true);
   };
 
-  const handleImportData = () => {
-    setImportDialogOpen(true);
+  const handleEditPool = (pool: PoolProject) => {
+    setEditingPool(pool);
+    setIsFormOpen(true);
   };
-  
-  const handleImportConfirm = (importType: string) => {
-    setImportDialogOpen(false);
-    console.log(`Les données ${importType} ont été importées avec succès`);
-    console.log("Les modules Cultures et Statistiques ont été mis à jour avec les nouvelles données");
-  };
-  
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm) {
-      console.log(`Recherche effectuée pour "${searchTerm}"`);
-    }
-  };
-  
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'Basse':
-        return 'bg-green-100 text-green-800';
-      case 'Moyenne':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Haute':
-        return 'bg-orange-100 text-orange-800';
-      case 'Extrême':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+
+  const handleDeletePool = async (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
+      await deletePool(id);
     }
   };
 
-  const toggleView = () => {
-    setShowGuadeloupeView(!showGuadeloupeView);
-    console.log(`Vue ${showGuadeloupeView ? 'Standard' : 'Guadeloupe'} activée`);
-    console.log(`Les données affichées dans les modules Cultures et Finances ont été adaptées`);
+  const handleSubmitPool = async (data: Omit<PoolProject, 'id' | 'created_at' | 'updated_at'>) => {
+    if (editingPool) {
+      await updatePool(editingPool.id, data);
+    } else {
+      await addPool(data);
+    }
+    setIsFormOpen(false);
+    setEditingPool(null);
   };
 
-  const handleGenerateStatistics = () => {
-    setStatsDialogOpen(true);
-    console.log("Les statistiques de vos parcelles ont été générées");
+  const handleViewDetails = (pool: PoolProject) => {
+    // Future: Navigate to pool details page
+    console.log('Ver detalhes do projeto:', pool);
   };
 
-  const handleOpenLayerManager = () => {
-    setLayersDialogOpen(true);
-    console.log("Gestionnaire de couches ouvert");
+  const getStatusCount = (status: string) => {
+    return pools.filter(pool => pool.status === status).length;
   };
 
-  const handleAddParcel = () => {
-    console.log("Formulaire de création de parcelle ouvert");
-  };
+  if (loading) {
+    return (
+      <PageLayout>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
+          </div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>
-      <div className="p-6 animate-enter">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <PageHeader 
-              title={title}
-              description={description}
-              onTitleChange={handleTitleChange}
-              onDescriptionChange={handleDescriptionChange}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Dernière synchronisation avec les autres modules: {lastSyncDate.toLocaleString()}
+            <h1 className="text-2xl font-bold text-gray-900">Projetos de Piscinas</h1>
+            <p className="text-gray-600 mt-1">
+              Gerencie todos os seus projetos de construção e manutenção de piscinas
             </p>
           </div>
-          
-          <div className="flex flex-wrap gap-2">
-            <ParcelFilters 
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              filterStatus={filterStatus}
-              setFilterStatus={setFilterStatus}
-              filterType={filterType}
-              setFilterType={setFilterType}
-              onSearch={handleSearch}
-              dateRange={dateRange}
-              setDateRange={setDateRange}
-              areaRange={areaRange}
-              setAreaRange={setAreaRange}
-            />
-            
-            <ParcelActionButtons 
-              onExportData={handleExportData}
-              onImportData={handleImportData}
-              onOpenMap={() => setMapPreviewOpen(true)}
-              onAddParcel={handleAddParcel}
-              onGenerateStatistics={handleGenerateStatistics}
-              onOpenLayerManager={handleOpenLayerManager}
-              activeParcelAlerts={activeParcelAlerts}
-              weatherAlertsOpen={weatherAlertsOpen}
-              setWeatherAlertsOpen={setWeatherAlertsOpen}
-              getSeverityColor={getSeverityColor}
-            />
-            
-            <button 
-              className="inline-flex items-center px-4 py-2 border border-input bg-white rounded-lg hover:bg-muted/30 transition-colors"
-              onClick={toggleView}
-            >
-              {showGuadeloupeView ? 'Vue Standard' : 'Vue Guadeloupe'}
-            </button>
+          <Button onClick={handleAddPool} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Projeto
+          </Button>
+        </div>
+
+        {/* Status Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-yellow-800">{getStatusCount('orcamento')}</div>
+            <div className="text-xs text-yellow-600">Orçamentos</div>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-blue-800">{getStatusCount('aprovado')}</div>
+            <div className="text-xs text-blue-600">Aprovados</div>
+          </div>
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-orange-800">{getStatusCount('em_construcao')}</div>
+            <div className="text-xs text-orange-600">Em Construção</div>
+          </div>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-green-800">{getStatusCount('finalizado')}</div>
+            <div className="text-xs text-green-600">Finalizados</div>
+          </div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-red-800">{getStatusCount('cancelado')}</div>
+            <div className="text-xs text-red-600">Cancelados</div>
           </div>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mb-6 p-4 bg-white rounded-xl border border-muted"
-        >
-          <div className="flex items-center mb-2">
-            <FileSpreadsheet className="h-5 w-5 mr-2 text-agri-primary" />
-            <h2 className="text-lg font-medium">Aperçu des statistiques parcellaires</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-3 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-              <p className="text-sm text-muted-foreground">Surface totale</p>
-              <p className="text-2xl font-semibold">128.5 ha</p>
+        {/* Filters and Search */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Buscar por cliente, endereço ou email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-full sm:w-80"
+              />
             </div>
-            <div className="p-3 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-              <p className="text-sm text-muted-foreground">Parcelles actives</p>
-              <p className="text-2xl font-semibold">42</p>
-            </div>
-            <div className="p-3 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-              <p className="text-sm text-muted-foreground">Rendement moyen</p>
-              <p className="text-2xl font-semibold">7.2 t/ha</p>
-            </div>
-            <div className="p-3 bg-muted/20 rounded-lg hover:bg-muted/30 transition-colors">
-              <p className="text-sm text-muted-foreground">Cultures principales</p>
-              <p className="text-xl font-semibold">Maïs, Blé, Colza</p>
-            </div>
-          </div>
-        </motion.div>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Status</SelectItem>
+                <SelectItem value="orcamento">Orçamento</SelectItem>
+                <SelectItem value="aprovado">Aprovado</SelectItem>
+                <SelectItem value="em_construcao">Em Construção</SelectItem>
+                <SelectItem value="finalizado">Finalizado</SelectItem>
+                <SelectItem value="cancelado">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
 
-        {showGuadeloupeView ? (
-          <GuadeloupeParcelManagement />
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-full sm:w-40">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Tipos</SelectItem>
+                <SelectItem value="pequena">Pequena</SelectItem>
+                <SelectItem value="media">Média</SelectItem>
+                <SelectItem value="grande">Grande</SelectItem>
+                <SelectItem value="olimpica">Olímpica</SelectItem>
+                <SelectItem value="infantil">Infantil</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === 'grid' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('grid')}
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">
+            {filteredPools.length} projeto{filteredPools.length !== 1 ? 's' : ''} encontrado{filteredPools.length !== 1 ? 's' : ''}
+          </div>
+          {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearchTerm('');
+                setStatusFilter('all');
+                setTypeFilter('all');
+              }}
+            >
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+
+        {/* Projects Grid/List */}
+        {filteredPools.length > 0 ? (
+          <div className={`${
+            viewMode === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' 
+              : 'space-y-4'
+          }`}>
+            {filteredPools.map((pool) => (
+              <PoolCard
+                key={pool.id}
+                pool={pool}
+                onEdit={handleEditPool}
+                onDelete={handleDeletePool}
+                onViewDetails={handleViewDetails}
+              />
+            ))}
+          </div>
         ) : (
-          <ParcelManagement />
+          <div className="text-center py-12">
+            <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <Plus className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchTerm || statusFilter !== 'all' || typeFilter !== 'all' 
+                ? 'Nenhum projeto encontrado' 
+                : 'Nenhum projeto cadastrado'
+              }
+            </h3>
+            <p className="text-gray-600 mb-4">
+              {searchTerm || statusFilter !== 'all' || typeFilter !== 'all'
+                ? 'Tente ajustar os filtros de busca'
+                : 'Comece criando seu primeiro projeto de piscina'
+              }
+            </p>
+            {(!searchTerm && statusFilter === 'all' && typeFilter === 'all') && (
+              <Button onClick={handleAddPool} className="bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4 mr-2" />
+                Criar Primeiro Projeto
+              </Button>
+            )}
+          </div>
         )}
-        
-        <ParcelMapDialog 
-          isOpen={mapPreviewOpen} 
-          onOpenChange={setMapPreviewOpen} 
-        />
-        
-        <ParcelImportDialog 
-          isOpen={importDialogOpen} 
-          onOpenChange={setImportDialogOpen}
-          onImportConfirm={handleImportConfirm}
+
+        {/* Pool Form Dialog */}
+        <PoolForm
+          isOpen={isFormOpen}
+          onClose={() => {
+            setIsFormOpen(false);
+            setEditingPool(null);
+          }}
+          onSubmit={handleSubmitPool}
+          initialData={editingPool || undefined}
+          title={editingPool ? 'Editar Projeto' : 'Novo Projeto de Piscina'}
         />
       </div>
     </PageLayout>

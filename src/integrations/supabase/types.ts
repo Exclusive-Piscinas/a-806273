@@ -9,6 +9,167 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      clientes_piscinas: {
+        Row: {
+          cep: string | null
+          cidade: string | null
+          created_at: string
+          documento: string | null
+          email: string | null
+          endereco: string | null
+          id: string
+          nome: string
+          observacoes: string | null
+          telefone: string | null
+          tipo_cliente: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cep?: string | null
+          cidade?: string | null
+          created_at?: string
+          documento?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome: string
+          observacoes?: string | null
+          telefone?: string | null
+          tipo_cliente?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cep?: string | null
+          cidade?: string | null
+          created_at?: string
+          documento?: string | null
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          telefone?: string | null
+          tipo_cliente?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      estoque_piscinas: {
+        Row: {
+          categoria: string
+          codigo_produto: string | null
+          created_at: string
+          data_validade: string | null
+          fornecedor: string | null
+          id: string
+          localizacao: string | null
+          nome: string
+          observacoes: string | null
+          preco_unitario: number
+          quantidade: number
+          quantidade_minima: number
+          subcategoria: string | null
+          unidade: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          categoria: string
+          codigo_produto?: string | null
+          created_at?: string
+          data_validade?: string | null
+          fornecedor?: string | null
+          id?: string
+          localizacao?: string | null
+          nome: string
+          observacoes?: string | null
+          preco_unitario?: number
+          quantidade?: number
+          quantidade_minima?: number
+          subcategoria?: string | null
+          unidade?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          categoria?: string
+          codigo_produto?: string | null
+          created_at?: string
+          data_validade?: string | null
+          fornecedor?: string | null
+          id?: string
+          localizacao?: string | null
+          nome?: string
+          observacoes?: string | null
+          preco_unitario?: number
+          quantidade?: number
+          quantidade_minima?: number
+          subcategoria?: string | null
+          unidade?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      financeiro_piscinas: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_transacao: string
+          descricao: string
+          forma_pagamento: string | null
+          id: string
+          observacoes: string | null
+          projeto_id: string | null
+          status: string
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_transacao?: string
+          descricao: string
+          forma_pagamento?: string | null
+          id?: string
+          observacoes?: string | null
+          projeto_id?: string | null
+          status?: string
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_transacao?: string
+          descricao?: string
+          forma_pagamento?: string | null
+          id?: string
+          observacoes?: string | null
+          projeto_id?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financeiro_piscinas_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projetos_piscinas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -30,6 +191,66 @@ export type Database = {
           id?: string
           nome_completo?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      projetos_piscinas: {
+        Row: {
+          created_at: string
+          data_finalizacao: string | null
+          data_inicio: string | null
+          data_previsao_fim: string | null
+          email_cliente: string | null
+          endereco: string | null
+          id: string
+          nome_cliente: string
+          observacoes: string | null
+          orcamento_total: number | null
+          profundidade: number | null
+          status: string
+          tamanho_metros: string | null
+          telefone_cliente: string | null
+          tipo_piscina: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_finalizacao?: string | null
+          data_inicio?: string | null
+          data_previsao_fim?: string | null
+          email_cliente?: string | null
+          endereco?: string | null
+          id?: string
+          nome_cliente: string
+          observacoes?: string | null
+          orcamento_total?: number | null
+          profundidade?: number | null
+          status?: string
+          tamanho_metros?: string | null
+          telefone_cliente?: string | null
+          tipo_piscina: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_finalizacao?: string | null
+          data_inicio?: string | null
+          data_previsao_fim?: string | null
+          email_cliente?: string | null
+          endereco?: string | null
+          id?: string
+          nome_cliente?: string
+          observacoes?: string | null
+          orcamento_total?: number | null
+          profundidade?: number | null
+          status?: string
+          tamanho_metros?: string | null
+          telefone_cliente?: string | null
+          tipo_piscina?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
