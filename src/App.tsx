@@ -2,7 +2,9 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
 import Index from "./pages/Index";
+import AuthPage from "./pages/AuthPage";
 import ParcelsPage from "./pages/ParcelsPage";
 import ParcelsDetailsPage from "./pages/ParcelsDetailsPage";
 import CropsPage from "./pages/CropsPage";
@@ -14,72 +16,84 @@ import { useEffect } from "react";
 import { CRMProvider } from "./contexts/CRMContext";
 import { StatisticsProvider } from "./contexts/StatisticsContext";
 import { AppSettingsProvider } from "./contexts/AppSettingsContext";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { trackPageView } from "./utils/analytics";
 
-// Define routes configuration with redirects
+// Configuração das rotas com proteção
 const routes = [
-  { path: "/", element: <Index /> },
-  { path: "/parcelles", element: <ParcelsPage /> },
-  { path: "/parcelles/:id", element: <ParcelsDetailsPage /> },
-  { path: "/cultures", element: <CropsPage /> },
-  { path: "/inventaire", element: <InventoryPage /> },
-  { path: "/finances", element: <FinancePage /> },
-  { path: "/statistiques", element: <StatisticsProvider><StatsPage /></StatisticsProvider> },
-  { path: "/rapports", element: <Navigate to="/statistiques" replace /> },
-  { path: "/parametres", element: <Navigate to="/" replace /> },
-  { path: "/dashboard", element: <Navigate to="/" replace /> },
-  { path: "*", element: <NotFound /> }
+  { path: "/auth", element: <AuthPage />, protected: false },
+  { path: "/", element: <Index />, protected: true },
+  { path: "/parcelles", element: <ParcelsPage />, protected: true },
+  { path: "/parcelles/:id", element: <ParcelsDetailsPage />, protected: true },
+  { path: "/cultures", element: <CropsPage />, protected: true },
+  { path: "/inventaire", element: <InventoryPage />, protected: true },
+  { path: "/finances", element: <FinancePage />, protected: true },
+  { path: "/statistiques", element: <StatisticsProvider><StatsPage /></StatisticsProvider>, protected: true },
+  { path: "/rapports", element: <Navigate to="/statistiques" replace />, protected: true },
+  { path: "/parametres", element: <Navigate to="/" replace />, protected: true },
+  { path: "/dashboard", element: <Navigate to="/" replace />, protected: true },
+  { path: "*", element: <NotFound />, protected: false }
 ];
 
-// Create query client with enhanced configuration
+// Criar cliente de query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 5 * 60 * 1000, // 5 minutos
+      gcTime: 10 * 60 * 1000, // 10 minutos
     },
   },
 });
 
-// Router change handler component
+// Componente para gerenciar mudanças de rota
 const RouterChangeHandler = () => {
   useEffect(() => {
-    // Scroll to top on route change
+    // Rolar para o topo na mudança de rota
     window.scrollTo(0, 0);
     
-    // Track page view for analytics
+    // Rastrear visualização de página para analytics
     const currentPath = window.location.pathname;
-    const pageName = currentPath === '/' ? 'dashboard' : currentPath.replace(/^\//, '');
+    const pageName = currentPath === '/' ? 'painel' : currentPath.replace(/^\//, '');
     trackPageView(pageName);
   }, [location.pathname]);
   
   return null;
 };
 
-// Application main component with properly nested providers
+// Componente principal da aplicação
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppSettingsProvider>
-        <CRMProvider>
-          <BrowserRouter>
-            <TooltipProvider>
-              <RouterChangeHandler />
-              <Routes>
-                {routes.map((route) => (
-                  <Route 
-                    key={route.path} 
-                    path={route.path} 
-                    element={route.element} 
-                  />
-                ))}
-              </Routes>
-            </TooltipProvider>
-          </BrowserRouter>
-        </CRMProvider>
-      </AppSettingsProvider>
+      <AuthProvider>
+        <AppSettingsProvider>
+          <CRMProvider>
+            <BrowserRouter>
+              <TooltipProvider>
+                <RouterChangeHandler />
+                <Routes>
+                  {routes.map((route) => (
+                    <Route 
+                      key={route.path} 
+                      path={route.path} 
+                      element={
+                        route.protected ? (
+                          <ProtectedRoute>{route.element}</ProtectedRoute>
+                        ) : (
+                          route.element
+                        )
+                      } 
+                    />
+                  ))}
+                </Routes>
+                <Toaster />
+              </TooltipProvider>
+            </BrowserRouter>
+          </CRMProvider>
+        </AppSettingsProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
