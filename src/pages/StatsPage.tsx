@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Statistics from '../components/Statistics';
@@ -19,24 +20,24 @@ interface PerformanceData {
 }
 
 const StatsPage = () => {
-  const [pageTitle, setPageTitle] = useState('Statistiques et Analyses');
-  const [pageDescription, setPageDescription] = useState('Visualisez et analysez les données de votre exploitation en Guadeloupe');
+  const [pageTitle, setPageTitle] = useState('Estatísticas e Análises de Piscinas');
+  const [pageDescription, setPageDescription] = useState('Visualize e analise os dados do seu negócio de piscinas de fibra');
   const [activeView, setActiveView] = useState<'performance' | 'harvest' | 'detailed'>('performance');
   const [lastSyncDate, setLastSyncDate] = useState<Date>(new Date());
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [connectedModules, setConnectedModules] = useState<string[]>(['parcelles', 'cultures', 'finances']);
+  const [connectedModules, setConnectedModules] = useState<string[]>(['piscinas', 'produtos', 'financeiro']);
   
   const [performanceData, setPerformanceData] = useState<PerformanceData[]>([
-    { name: 'Rendement Canne à Sucre', current: 75, target: 85, unit: 't/ha' },
-    { name: 'Qualité Banane Export', current: 88, target: 95, unit: '%' },
-    { name: 'Rentabilité Ananas', current: 70, target: 80, unit: '%' },
-    { name: 'Certification Bio', current: 25, target: 40, unit: '%' },
-    { name: 'Innovation Igname', current: 60, target: 75, unit: '%' },
+    { name: 'Vendas Piscinas Pequenas', current: 75, target: 85, unit: 'vendas/mês' },
+    { name: 'Qualidade Premium', current: 88, target: 95, unit: '%' },
+    { name: 'Lucratividade Spas', current: 70, target: 80, unit: '%' },
+    { name: 'Satisfação Cliente', current: 92, target: 95, unit: '%' },
+    { name: 'Inovação Produtos', current: 60, target: 75, unit: '%' },
   ]);
   
   useEffect(() => {
     const initialSync = setTimeout(() => {
-      console.log('Les modules Parcelles, Cultures et Finances sont maintenant connectés aux statistiques');
+      console.log('Os módulos Piscinas, Produtos e Financeiro estão agora conectados às estatísticas');
     }, 1000);
     
     return () => clearTimeout(initialSync);
@@ -44,21 +45,21 @@ const StatsPage = () => {
   
   const syncData = () => {
     setIsSyncing(true);
-    console.log('Récupération des dernières données depuis tous les modules connectés...');
+    console.log('Recuperação dos dados mais recentes de todos os módulos conectados...');
     
     setTimeout(() => {
       setIsSyncing(false);
       setLastSyncDate(new Date());
-      console.log('Toutes les statistiques sont à jour avec les dernières données des modules');
-      console.log("Les indicateurs de performance ont été recalculés avec les dernières données");
+      console.log('Todas as estatísticas estão atualizadas com os dados mais recentes dos módulos');
+      console.log("Os indicadores de performance foram recalculados com os dados mais recentes");
     }, 2000);
   };
   
   const columns: Column[] = [
-    { id: 'name', header: 'Indicateur', accessorKey: 'name', isEditable: true },
-    { id: 'current', header: 'Valeur actuelle', accessorKey: 'current', type: 'number', isEditable: true },
-    { id: 'target', header: 'Objectif', accessorKey: 'target', type: 'number', isEditable: true },
-    { id: 'unit', header: 'Unité', accessorKey: 'unit', isEditable: true },
+    { id: 'name', header: 'Indicador', accessorKey: 'name', isEditable: true },
+    { id: 'current', header: 'Valor atual', accessorKey: 'current', type: 'number', isEditable: true },
+    { id: 'target', header: 'Meta', accessorKey: 'target', type: 'number', isEditable: true },
+    { id: 'unit', header: 'Unidade', accessorKey: 'unit', isEditable: true },
   ];
   
   const handleTableUpdate = (rowIndex: number, columnId: string, value: any) => {
@@ -74,8 +75,8 @@ const StatsPage = () => {
     newData[rowIndex] = updatedRow;
     setPerformanceData(newData);
     
-    console.log(`L'indicateur ${updatedRow.name} a été mis à jour avec succès.`);
-    console.log(`Les modules connectés ont été informés de la mise à jour de ${updatedRow.name}`);
+    console.log(`O indicador ${updatedRow.name} foi atualizado com sucesso.`);
+    console.log(`Os módulos conectados foram informados da atualização de ${updatedRow.name}`);
   };
   
   const handleDeleteRow = (rowIndex: number) => {
@@ -84,8 +85,8 @@ const StatsPage = () => {
     newData.splice(rowIndex, 1);
     setPerformanceData(newData);
     
-    console.log(`L'indicateur ${deletedItem.name} a été supprimé avec succès.`);
-    console.log(`Les modules connectés ont été informés de la suppression de ${deletedItem.name}`);
+    console.log(`O indicador ${deletedItem.name} foi excluído com sucesso.`);
+    console.log(`Os módulos conectados foram informados da exclusão de ${deletedItem.name}`);
   };
   
   const handleAddRow = (newRow: Record<string, any>) => {
@@ -97,33 +98,33 @@ const StatsPage = () => {
     };
     setPerformanceData([...performanceData, typedRow]);
     
-    console.log(`L'indicateur ${typedRow.name} a été ajouté avec succès.`);
-    console.log(`Les modules connectés ont été informés de l'ajout de ${typedRow.name}`);
+    console.log(`O indicador ${typedRow.name} foi adicionado com sucesso.`);
+    console.log(`Os módulos conectados foram informados da adição de ${typedRow.name}`);
   };
 
   const handleTitleChange = (value: string | number) => {
     setPageTitle(String(value));
-    console.log('Le titre de la page a été mis à jour.');
+    console.log('O título da página foi atualizado.');
   };
 
   const handleDescriptionChange = (value: string | number) => {
     setPageDescription(String(value));
-    console.log('La description de la page a été mise à jour.');
+    console.log('A descrição da página foi atualizada.');
   };
   
   const handleViewChange = (view: 'performance' | 'harvest' | 'detailed') => {
     setActiveView(view);
-    console.log(`Vous consultez maintenant la vue ${
-      view === 'performance' ? 'Indicateurs de performance' : 
-      view === 'harvest' ? 'Suivi des récoltes' : 'Statistiques détaillées'
+    console.log(`Você está agora visualizando a aba ${
+      view === 'performance' ? 'Indicadores de performance' : 
+      view === 'harvest' ? 'Acompanhamento de vendas' : 'Estatísticas detalhadas'
     }`);
     
-    console.log(`Les modules connectés ont été adaptés à la vue ${view === 'performance' ? 'indicateurs' : view === 'harvest' ? 'récoltes' : 'détaillée'}`);
+    console.log(`Os módulos conectados foram adaptados para a visualização ${view === 'performance' ? 'indicadores' : view === 'harvest' ? 'vendas' : 'detalhada'}`);
   };
   
   const handleExportData = () => {
-    console.log('Les données statistiques ont été exportées avec succès.');
-    console.log("Les données exportées sont disponibles pour tous les modules");
+    console.log('Os dados estatísticos foram exportados com sucesso.');
+    console.log("Os dados exportados estão disponíveis para todos os módulos");
   };
 
   return (
@@ -159,8 +160,8 @@ const StatsPage = () => {
                   />
                 </p>
                 <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                  <span className="mr-2">Modules connectés: {connectedModules.join(', ')}</span>
-                  <span>Dernière synchro: {lastSyncDate.toLocaleString()}</span>
+                  <span className="mr-2">Módulos conectados: {connectedModules.join(', ')}</span>
+                  <span>Última sincronização: {lastSyncDate.toLocaleString()}</span>
                 </div>
               </div>
               
@@ -174,7 +175,7 @@ const StatsPage = () => {
                   }`}
                 >
                   <PieChart className="h-4 w-4 mr-1.5" />
-                  Indicateurs
+                  Indicadores
                 </button>
                 
                 <button 
@@ -186,7 +187,7 @@ const StatsPage = () => {
                   }`}
                 >
                   <BarChart className="h-4 w-4 mr-1.5" />
-                  Récoltes
+                  Vendas
                 </button>
                 
                 <button 
@@ -198,18 +199,18 @@ const StatsPage = () => {
                   }`}
                 >
                   <TrendingUp className="h-4 w-4 mr-1.5" />
-                  Détaillé
+                  Detalhado
                 </button>
                 
                 <PreviewPrintButton
                   data={performanceData}
                   moduleName="performance-indicators"
-                  title="Indicateurs de Performance Agricole"
+                  title="Indicadores de Performance de Piscinas"
                   columns={[
-                    { key: "name", header: "Indicateur" },
-                    { key: "current", header: "Valeur actuelle" },
-                    { key: "target", header: "Objectif" },
-                    { key: "unit", header: "Unité" }
+                    { key: "name", header: "Indicador" },
+                    { key: "current", header: "Valor atual" },
+                    { key: "target", header: "Meta" },
+                    { key: "unit", header: "Unidade" }
                   ]}
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                   variant="ghost"
@@ -220,7 +221,7 @@ const StatsPage = () => {
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                 >
                   <Download className="h-4 w-4 mr-1.5" />
-                  Exporter
+                  Exportar
                 </button>
                 
                 <button 
@@ -229,17 +230,17 @@ const StatsPage = () => {
                   disabled={isSyncing}
                 >
                   <RefreshCw className={`h-4 w-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`} />
-                  {isSyncing ? 'Synchronisation...' : 'Synchroniser'}
+                  {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
                 </button>
                 
                 <button 
                   onClick={() => {
-                    console.log('Vos préférences de notification ont été mises à jour');
+                    console.log('Suas preferências de notificação foram atualizadas');
                   }}
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                 >
                   <Bell className="h-4 w-4 mr-1.5" />
-                  Alertes
+                  Alertas
                 </button>
               </div>
             </motion.header>
@@ -252,16 +253,16 @@ const StatsPage = () => {
                 className="mb-8"
               >
                 <ChartConfig 
-                  title="Indicateurs de performance agricole en Guadeloupe"
-                  description="Suivez vos performances par rapport à vos objectifs pour les cultures guadeloupéennes"
+                  title="Indicadores de performance de piscinas"
+                  description="Acompanhe suas performances em relação às suas metas para produtos de piscinas"
                   onTitleChange={(title) => {
-                    console.log('Le titre du graphique a été mis à jour.');
+                    console.log('O título do gráfico foi atualizado.');
                   }}
                   onDescriptionChange={(desc) => {
-                    console.log('La description du graphique a été mise à jour.');
+                    console.log('A descrição do gráfico foi atualizada.');
                   }}
                   onOptionsChange={(options) => {
-                    console.log('Les options du graphique ont été mises à jour.');
+                    console.log('As opções do gráfico foram atualizadas.');
                   }}
                   className="mb-6"
                 >

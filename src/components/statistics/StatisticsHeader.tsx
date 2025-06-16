@@ -17,16 +17,16 @@ const StatisticsHeader = () => {
   
   // Combine all statistics data for preview/print
   const statisticsData = [
-    ...(yieldData || []).map(item => ({ ...item, type: 'rendement' })),
-    ...(financialData.profitabilityByParcel || []).map(item => ({ ...item, type: 'financier' })),
-    ...(environmentalData.indicators || []).map(item => ({ ...item, type: 'environnement' }))
+    ...(yieldData || []).map(item => ({ ...item, type: 'vendas' })),
+    ...(financialData.profitabilityByParcel || []).map(item => ({ ...item, type: 'financeiro' })),
+    ...(environmentalData.indicators || []).map(item => ({ ...item, type: 'qualidade' }))
   ];
 
   const handleExport = async () => {
     try {
-      console.log("Exportation des statistiques au format CSV...");
+      console.log("Exportação das estatísticas de piscinas ao formato CSV...");
       await exportModuleData('statistiques', 'csv');
-      console.log("Exportation réussie!");
+      console.log("Exportação realizada com sucesso!");
     } catch (error) {
       console.error("Error exporting statistics:", error);
     }
@@ -34,9 +34,9 @@ const StatisticsHeader = () => {
 
   const handlePrint = async () => {
     try {
-      console.log("Préparation de l'impression des statistiques...");
+      console.log("Preparação da impressão das estatísticas de piscinas...");
       await printModuleData('statistiques');
-      console.log("Document envoyé à l'impression");
+      console.log("Documento enviado para impressão");
     } catch (error) {
       console.error("Error printing statistics:", error);
     }
@@ -44,21 +44,21 @@ const StatisticsHeader = () => {
 
   const handleShare = () => {
     setShareDialogOpen(true);
-    console.log("Ouverture de la boîte de dialogue de partage");
+    console.log("Abertura do diálogo de compartilhamento");
   };
   
   const handleShareByEmail = () => {
-    console.log("Préparation du partage par email...");
+    console.log("Preparação do compartilhamento por email...");
     setShareDialogOpen(false);
-    console.log("Email de partage préparé");
+    console.log("Email de compartilhamento preparado");
   };
   
   const handleShareByPDF = async () => {
     try {
-      console.log("Génération du PDF pour partage...");
+      console.log("Geração do PDF para compartilhamento...");
       await exportModuleData('statistiques', 'pdf');
       setShareDialogOpen(false);
-      console.log("PDF généré avec succès pour partage");
+      console.log("PDF gerado com sucesso para compartilhamento");
     } catch (error) {
       console.error("Error generating PDF:", error);
       setShareDialogOpen(false);
@@ -68,8 +68,8 @@ const StatisticsHeader = () => {
   return (
     <header className="flex flex-col mb-6 gap-4">
       <div>
-        <h1 className="text-xl md:text-2xl font-bold mb-1 text-gray-800">Statistiques et Analyses</h1>
-        <p className="text-sm md:text-base text-gray-500">Visualisez et analysez les données de votre exploitation</p>
+        <h1 className="text-xl md:text-2xl font-bold mb-1 text-gray-800">Estatísticas de Vendas e Análises</h1>
+        <p className="text-sm md:text-base text-gray-500">Visualize e analise os dados do seu negócio de piscinas</p>
       </div>
       <div className="flex flex-wrap gap-2 md:gap-3 justify-start md:justify-end">
         <ReportGenerationButton 
@@ -83,15 +83,15 @@ const StatisticsHeader = () => {
             <PreviewPrintButton 
               data={statisticsData}
               moduleName="statistiques"
-              title="Statistiques et Analyses"
+              title="Estatísticas de Vendas e Análises"
               className="bg-white border-gray-200 hover:bg-gray-50 text-xs md:text-sm h-auto py-1.5 md:py-2"
               variant="outline"
               columns={[
-                { key: "type", header: "Type" },
-                { key: "name", header: "Nom" },
-                { key: "current", header: "Valeur actuelle" },
-                { key: "previous", header: "Valeur précédente" },
-                { key: "unit", header: "Unité" }
+                { key: "type", header: "Tipo" },
+                { key: "name", header: "Nome" },
+                { key: "current", header: "Valor atual" },
+                { key: "previous", header: "Valor anterior" },
+                { key: "unit", header: "Unidade" }
               ]}
             />
             
@@ -102,7 +102,7 @@ const StatisticsHeader = () => {
               size={isMobile ? "sm" : "default"}
             >
               <Download className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2 text-gray-600" />
-              {isMobile ? "CSV" : "Exporter CSV"}
+              {isMobile ? "CSV" : "Exportar CSV"}
             </Button>
           </>
         ) : null}
@@ -113,31 +113,31 @@ const StatisticsHeader = () => {
           size={isMobile ? "sm" : "default"}
         >
           <Share2 className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2 text-gray-600" />
-          {isMobile ? "Partager" : "Partager"}
+          {isMobile ? "Compartilhar" : "Compartilhar"}
         </Button>
       </div>
       
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
         <DialogContent className="sm:max-w-md max-w-[90%]">
           <DialogHeader>
-            <DialogTitle>Partager les statistiques</DialogTitle>
+            <DialogTitle>Compartilhar estatísticas</DialogTitle>
             <DialogDescription>
-              Choisissez comment vous souhaitez partager ces statistiques
+              Escolha como deseja compartilhar estas estatísticas de piscinas
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <Button onClick={handleShareByEmail} variant="outline">
-                Envoyer par email
+                Enviar por email
               </Button>
               <Button onClick={handleShareByPDF} className="bg-green-600 hover:bg-green-700">
-                Générer un PDF
+                Gerar PDF
               </Button>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShareDialogOpen(false)}>
-              Annuler
+              Cancelar
             </Button>
           </DialogFooter>
         </DialogContent>

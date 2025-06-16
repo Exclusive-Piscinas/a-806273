@@ -1,7 +1,6 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Types pour les différentes données statistiques
+// Types para os diferentes dados estatísticos
 export interface YieldData {
   name: string;
   current: number;
@@ -31,11 +30,11 @@ export interface EnvironmentalData {
 }
 
 interface StatisticsContextType {
-  // Données de rendement
+  // Dados de vendas
   yieldData: YieldData[];
   setYieldData: React.Dispatch<React.SetStateAction<YieldData[]>>;
   
-  // Données financières
+  // Dados financeiros
   financialData: {
     profitabilityByParcel: FinancialData[];
     costAnalysis: CostData[];
@@ -47,7 +46,7 @@ interface StatisticsContextType {
     revenueByMonth: any[];
   }>>;
   
-  // Données environnementales
+  // Dados de qualidade
   environmentalData: {
     indicators: EnvironmentalData[];
     carbonFootprint: number;
@@ -61,17 +60,17 @@ interface StatisticsContextType {
     biodiversity: number;
   }>>;
   
-  // Données de prévision
+  // Dados de previsão
   forecastData: any[];
   setForecastData: React.Dispatch<React.SetStateAction<any[]>>;
   
-  // Période et filtres
+  // Período e filtros
   period: 'day' | 'week' | 'month' | 'year';
   setPeriod: React.Dispatch<React.SetStateAction<'day' | 'week' | 'month' | 'year'>>;
   cropFilter: string;
   setCropFilter: React.Dispatch<React.SetStateAction<string>>;
   
-  // Fonction pour mettre à jour les données en fonction des filtres
+  // Função para atualizar os dados com base nos filtros
   updateDataWithFilters: (period: string, crop: string) => void;
 }
 
@@ -85,31 +84,31 @@ export const useStatistics = () => {
   return context;
 };
 
-// Données initiales
+// Dados iniciais adaptados para piscinas
 const initialYieldData: YieldData[] = [
-  { name: 'Canne à Sucre', current: 85, previous: 75, unit: 't/ha' },
-  { name: 'Banane', current: 32, previous: 30, unit: 't/ha' },
-  { name: 'Ananas', current: 45, previous: 48, unit: 't/ha' },
-  { name: 'Igname', current: 18, previous: 15, unit: 't/ha' },
-  { name: 'Madère', current: 22, previous: 20, unit: 't/ha' }
+  { name: 'Piscinas Pequenas', current: 85, previous: 75, unit: 'vendas/mês' },
+  { name: 'Piscinas Médias', current: 32, previous: 30, unit: 'vendas/mês' },
+  { name: 'Piscinas Grandes', current: 15, previous: 18, unit: 'vendas/mês' },
+  { name: 'Spas', current: 18, previous: 15, unit: 'vendas/mês' },
+  { name: 'Acessórios', current: 220, previous: 200, unit: 'vendas/mês' }
 ];
 
 const initialProfitabilityData: FinancialData[] = [
-  { name: 'Parcelle Nord', profitability: 1250, size: 12.5, crop: 'Canne à Sucre' },
-  { name: 'Parcelle Est', profitability: 980, size: 8.3, crop: 'Banane' },
-  { name: 'Parcelle Sud', profitability: 1580, size: 15.7, crop: 'Ananas' },
-  { name: 'Parcelle Ouest', profitability: 850, size: 10.2, crop: 'Igname' },
-  { name: 'Parcelle Centrale', profitability: 920, size: 6.8, crop: 'Madère' }
+  { name: 'Região Norte', profitability: 1250, size: 12.5, crop: 'Piscinas Pequenas' },
+  { name: 'Região Leste', profitability: 980, size: 8.3, crop: 'Piscinas Médias' },
+  { name: 'Região Sul', profitability: 1580, size: 15.7, crop: 'Piscinas Grandes' },
+  { name: 'Região Oeste', profitability: 850, size: 10.2, crop: 'Spas' },
+  { name: 'Região Central', profitability: 920, size: 6.8, crop: 'Acessórios' }
 ];
 
 const initialCostData: CostData[] = [
-  { name: 'Semences', value: 1800, color: '#4CAF50' },
-  { name: 'Fertilisants', value: 2200, color: '#8D6E63' },
-  { name: 'Phyto', value: 1500, color: '#FFC107' },
-  { name: 'Carburant', value: 1200, color: '#2196F3' },
-  { name: 'Main d\'œuvre', value: 3500, color: '#673AB7' },
-  { name: 'Mécanisation', value: 2800, color: '#E91E63' },
-  { name: 'Divers', value: 900, color: '#9E9E9E' }
+  { name: 'Fibra de vidro', value: 1800, color: '#4CAF50' },
+  { name: 'Resina', value: 2200, color: '#8D6E63' },
+  { name: 'Gel coat', value: 1500, color: '#FFC107' },
+  { name: 'Transporte', value: 1200, color: '#2196F3' },
+  { name: 'Mão de obra', value: 3500, color: '#673AB7' },
+  { name: 'Equipamentos', value: 2800, color: '#E91E63' },
+  { name: 'Diversos', value: 900, color: '#9E9E9E' }
 ];
 
 const initialRevenueData = [
@@ -152,14 +151,14 @@ export const StatisticsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('year');
   const [cropFilter, setCropFilter] = useState('all');
   
-  // Fonction pour mettre à jour les données en fonction des filtres
+  // Função para atualizar os dados com base nos filtros
   const updateDataWithFilters = (period: string, crop: string) => {
-    // Filtrer les données de rendement par culture si nécessaire
+    // Filtrar os dados de vendas por cultura se necessário
     if (crop !== 'all') {
       const filteredYieldData = initialYieldData.filter(item => item.name === crop);
       setYieldData(filteredYieldData);
       
-      // Filtrer également les données financières par culture
+      // Filtrar também os dados financeiros por cultura
       const filteredProfitabilityData = initialProfitabilityData.filter(item => item.crop === crop);
       setFinancialData(prev => ({
         ...prev,
@@ -173,10 +172,10 @@ export const StatisticsProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       }));
     }
     
-    // Vous pourriez également ajuster les autres données en fonction de la période
+    // Você poderia também ajustar os outros dados em função da período
   };
   
-  // Mettre à jour les données lorsque les filtres changent
+  // Atualizar os dados quando os filtros mudam
   useEffect(() => {
     updateDataWithFilters(period, cropFilter);
   }, [period, cropFilter]);

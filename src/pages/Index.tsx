@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Sprout, Package, BarChart2 } from 'lucide-react';
+import { MapPin, Droplets, Package, BarChart2 } from 'lucide-react';
 import PageLayout from "@/components/layout/PageLayout";
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -13,7 +13,7 @@ const Index = () => {
   const quickActions = [
     {
       title: t('dashboard.viewPools'),
-      description: 'Gerencie suas piscinas',
+      description: 'Gerencie suas piscinas de fibra',
       icon: MapPin,
       path: '/parcelles',
       color: 'bg-blue-500 hover:bg-blue-600'
@@ -21,20 +21,20 @@ const Index = () => {
     {
       title: t('dashboard.addMaintenance'),
       description: 'Adicione nova manutenção',
-      icon: Sprout,
+      icon: Droplets,
       path: '/cultures',
-      color: 'bg-green-500 hover:bg-green-600'
+      color: 'bg-cyan-500 hover:bg-cyan-600'
     },
     {
       title: t('dashboard.manageInventory'),
-      description: 'Controle seu estoque',
+      description: 'Controle produtos e equipamentos',
       icon: Package,
       path: '/inventaire',
       color: 'bg-orange-500 hover:bg-orange-600'
     },
     {
       title: t('dashboard.viewReports'),
-      description: 'Visualize relatórios',
+      description: 'Visualize relatórios de vendas',
       icon: BarChart2,
       path: '/statistiques',
       color: 'bg-purple-500 hover:bg-purple-600'
@@ -57,7 +57,7 @@ const Index = () => {
           <CardHeader>
             <CardTitle>{t('dashboard.quickActions')}</CardTitle>
             <CardDescription>
-              Acesse rapidamente as principais funcionalidades do sistema
+              Acesse rapidamente as principais funcionalidades do sistema de piscinas
             </CardDescription>
           </CardHeader>
           <CardContent>

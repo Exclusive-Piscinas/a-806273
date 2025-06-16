@@ -3,48 +3,48 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { EditableField } from './ui/editable-field';
 import { EditableTable, Column } from './ui/editable-table';
-import { Tractor, Carrot, ArrowUp, ArrowDown } from 'lucide-react';
+import { Droplets, Package, ArrowUp, ArrowDown } from 'lucide-react';
 import { useStatistics } from '../contexts/StatisticsContext';
 import PreviewPrintButton from './common/PreviewPrintButton';
 
-interface HarvestData {
-  crop: string;
-  currentYield: number;
-  previousYield: number;
+interface SalesData {
+  product: string;
+  currentSales: number;
+  previousSales: number;
   unit: string;
-  harvestArea: number;
-  quality: 'Excellente' | 'Bonne' | 'Moyenne' | 'Faible';
+  targetMarket: number;
+  quality: 'Excelente' | 'Boa' | 'Média' | 'Baixa';
 }
 
 const GuadeloupeHarvestTracking = () => {
   const { yieldData } = useStatistics();
-  const [title, setTitle] = useState('Suivi des Récoltes en Guadeloupe');
-  const [description, setDescription] = useState('Suivez les rendements et la qualité des récoltes pour les principales cultures guadeloupéennes');
+  const [title, setTitle] = useState('Acompanhamento de Vendas de Piscinas');
+  const [description, setDescription] = useState('Acompanhe as vendas e qualidade dos produtos para os principais tipos de piscinas');
   
-  // Convertir les données de rendement pour les adapter au format attendu
-  const [harvestData, setHarvestData] = useState<HarvestData[]>(
+  // Converter os dados de rendimento para se adaptar ao formato esperado
+  const [salesData, setSalesData] = useState<SalesData[]>(
     yieldData.map(item => ({
-      crop: item.name,
-      currentYield: item.current,
-      previousYield: item.previous,
+      product: item.name,
+      currentSales: item.current,
+      previousSales: item.previous,
       unit: item.unit,
-      harvestArea: item.name === 'Canne à Sucre' ? 12500 :
-                   item.name === 'Banane' ? 2300 :
-                   item.name === 'Ananas' ? 350 :
-                   item.name === 'Igname' ? 420 : 180,
-      quality: item.name === 'Banane' ? 'Excellente' :
-               item.name === 'Ananas' || item.name === 'Canne à Sucre' || item.name === 'Madère' ? 'Bonne' : 'Moyenne'
+      targetMarket: item.name === 'Piscinas Pequenas' ? 125 :
+                   item.name === 'Piscinas Médias' ? 45 :
+                   item.name === 'Piscinas Grandes' ? 25 :
+                   item.name === 'Spas' ? 30 : 250,
+      quality: item.name === 'Piscinas Médias' ? 'Excelente' :
+               item.name === 'Piscinas Grandes' || item.name === 'Piscinas Pequenas' || item.name === 'Acessórios' ? 'Boa' : 'Média'
     }))
   );
   
-  // Colonnes pour le tableau éditable
+  // Colunas para a tabela editável
   const columns: Column[] = [
-    { id: 'crop', header: 'Culture', accessorKey: 'crop', isEditable: true },
-    { id: 'currentYield', header: 'Rendement actuel', accessorKey: 'currentYield', type: 'number', isEditable: true },
-    { id: 'previousYield', header: 'Rendement précédent', accessorKey: 'previousYield', type: 'number', isEditable: true },
-    { id: 'unit', header: 'Unité', accessorKey: 'unit', isEditable: true },
-    { id: 'harvestArea', header: 'Surface (ha)', accessorKey: 'harvestArea', type: 'number', isEditable: true },
-    { id: 'quality', header: 'Qualité', accessorKey: 'quality', isEditable: true }
+    { id: 'product', header: 'Produto', accessorKey: 'product', isEditable: true },
+    { id: 'currentSales', header: 'Vendas atuais', accessorKey: 'currentSales', type: 'number', isEditable: true },
+    { id: 'previousSales', header: 'Vendas anteriores', accessorKey: 'previousSales', type: 'number', isEditable: true },
+    { id: 'unit', header: 'Unidade', accessorKey: 'unit', isEditable: true },
+    { id: 'targetMarket', header: 'Meta de mercado', accessorKey: 'targetMarket', type: 'number', isEditable: true },
+    { id: 'quality', header: 'Qualidade', accessorKey: 'quality', isEditable: true }
   ];
   
   // Handlers
@@ -57,67 +57,67 @@ const GuadeloupeHarvestTracking = () => {
   };
   
   const handleTableUpdate = (rowIndex: number, columnId: string, value: any) => {
-    const newData = [...harvestData];
+    const newData = [...salesData];
     const updatedRow = { ...newData[rowIndex] };
     
-    if (columnId === 'currentYield' || columnId === 'previousYield' || columnId === 'harvestArea') {
+    if (columnId === 'currentSales' || columnId === 'previousSales' || columnId === 'targetMarket') {
       (updatedRow as any)[columnId] = Number(value);
-    } else if (columnId === 'crop' || columnId === 'unit' || columnId === 'quality') {
+    } else if (columnId === 'product' || columnId === 'unit' || columnId === 'quality') {
       (updatedRow as any)[columnId] = String(value);
     }
     
-    newData[rowIndex] = updatedRow as HarvestData;
-    setHarvestData(newData);
-    console.log('Données de récolte mises à jour');
+    newData[rowIndex] = updatedRow as SalesData;
+    setSalesData(newData);
+    console.log('Dados de vendas atualizados');
   };
   
   const handleDeleteRow = (rowIndex: number) => {
-    const newData = [...harvestData];
+    const newData = [...salesData];
     newData.splice(rowIndex, 1);
-    setHarvestData(newData);
-    console.log('Culture supprimée du suivi');
+    setSalesData(newData);
+    console.log('Produto removido do acompanhamento');
   };
   
   const handleAddRow = (newRow: Record<string, any>) => {
-    const typedRow: HarvestData = {
-      crop: String(newRow.crop || ''),
-      currentYield: Number(newRow.currentYield || 0),
-      previousYield: Number(newRow.previousYield || 0),
-      unit: String(newRow.unit || 't/ha'),
-      harvestArea: Number(newRow.harvestArea || 0),
-      quality: (newRow.quality as HarvestData['quality']) || 'Moyenne'
+    const typedRow: SalesData = {
+      product: String(newRow.product || ''),
+      currentSales: Number(newRow.currentSales || 0),
+      previousSales: Number(newRow.previousSales || 0),
+      unit: String(newRow.unit || 'vendas/mês'),
+      targetMarket: Number(newRow.targetMarket || 0),
+      quality: (newRow.quality as SalesData['quality']) || 'Média'
     };
-    setHarvestData([...harvestData, typedRow]);
-    console.log('Nouvelle culture ajoutée au suivi');
+    setSalesData([...salesData, typedRow]);
+    console.log('Novo produto adicionado ao acompanhamento');
   };
   
-  // Données pour le graphique comparatif
-  const chartData = harvestData.map(item => ({
-    name: item.crop,
-    actuel: item.currentYield,
-    précédent: item.previousYield,
-    différence: item.currentYield - item.previousYield,
-    unité: item.unit
+  // Dados para o gráfico comparativo
+  const chartData = salesData.map(item => ({
+    name: item.product,
+    atual: item.currentSales,
+    anterior: item.previousSales,
+    diferenca: item.currentSales - item.previousSales,
+    unidade: item.unit
   }));
 
-  // Prepare data for preview/print
-  const printData = harvestData.map(item => ({
-    culture: item.crop,
-    rendement_actuel: `${item.currentYield} ${item.unit}`,
-    rendement_precedent: `${item.previousYield} ${item.unit}`,
-    surface: `${item.harvestArea} ha`,
-    qualite: item.quality,
-    evolution: `${item.currentYield > item.previousYield ? '+' : ''}${(item.currentYield - item.previousYield)} ${item.unit}`
+  // Preparar dados para visualização/impressão
+  const printData = salesData.map(item => ({
+    produto: item.product,
+    vendas_atuais: `${item.currentSales} ${item.unit}`,
+    vendas_anteriores: `${item.previousSales} ${item.unit}`,
+    meta_mercado: `${item.targetMarket}`,
+    qualidade: item.quality,
+    evolucao: `${item.currentSales > item.previousSales ? '+' : ''}${(item.currentSales - item.previousSales)} ${item.unit}`
   }));
   
-  // Columns for preview/print
+  // Colunas para visualização/impressão
   const printColumns = [
-    { key: "culture", header: "Culture" },
-    { key: "rendement_actuel", header: "Rendement actuel" },
-    { key: "rendement_precedent", header: "Rendement précédent" },
-    { key: "surface", header: "Surface (ha)" },
-    { key: "qualite", header: "Qualité" },
-    { key: "evolution", header: "Évolution" }
+    { key: "produto", header: "Produto" },
+    { key: "vendas_atuais", header: "Vendas atuais" },
+    { key: "vendas_anteriores", header: "Vendas anteriores" },
+    { key: "meta_mercado", header: "Meta de mercado" },
+    { key: "qualidade", header: "Qualidade" },
+    { key: "evolucao", header: "Evolução" }
   ];
   
   return (
@@ -126,7 +126,7 @@ const GuadeloupeHarvestTracking = () => {
         <div className="mb-4 flex justify-between items-start">
           <div>
             <h2 className="text-xl font-bold flex items-center">
-              <Tractor className="h-6 w-6 mr-2 text-agri-primary" />
+              <Droplets className="h-6 w-6 mr-2 text-blue-500" />
               <EditableField
                 value={title}
                 onSave={handleTitleChange}
@@ -144,7 +144,7 @@ const GuadeloupeHarvestTracking = () => {
           
           <PreviewPrintButton 
             data={printData} 
-            moduleName="harvest_data"
+            moduleName="sales_data"
             title={title}
             columns={printColumns}
             variant="outline"
@@ -162,33 +162,33 @@ const GuadeloupeHarvestTracking = () => {
               <YAxis />
               <Tooltip 
                 formatter={(value, name, props) => {
-                  if (name === 'différence') {
-                    return [`${Number(value) > 0 ? '+' : ''}${value} ${props.payload.unité}`, 'Évolution'];
+                  if (name === 'diferenca') {
+                    return [`${Number(value) > 0 ? '+' : ''}${value} ${props.payload.unidade}`, 'Evolução'];
                   }
-                  return [`${value} ${props.payload.unité}`, name];
+                  return [`${value} ${props.payload.unidade}`, name];
                 }}
               />
               <Legend />
-              <Bar name="Rendement actuel" dataKey="actuel" fill="#4CAF50" />
-              <Bar name="Rendement précédent" dataKey="précédent" fill="#8D6E63" />
+              <Bar name="Vendas atuais" dataKey="atual" fill="#4CAF50" />
+              <Bar name="Vendas anteriores" dataKey="anterior" fill="#8D6E63" />
             </BarChart>
           </ResponsiveContainer>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {harvestData.map(item => {
-            const change = item.currentYield - item.previousYield;
-            const changePercent = ((change / item.previousYield) * 100).toFixed(1);
+          {salesData.map(item => {
+            const change = item.currentSales - item.previousSales;
+            const changePercent = ((change / item.previousSales) * 100).toFixed(1);
             const isPositive = change >= 0;
             
             return (
-              <div key={item.crop} className="bg-muted/30 rounded-lg p-4 border">
+              <div key={item.product} className="bg-muted/30 rounded-lg p-4 border">
                 <h3 className="font-medium mb-1 flex items-center">
-                  <Carrot className="h-4 w-4 mr-1.5 text-agri-primary" />
-                  {item.crop}
+                  <Package className="h-4 w-4 mr-1.5 text-blue-500" />
+                  {item.product}
                 </h3>
-                <div className="text-2xl font-bold">{item.currentYield} {item.unit}</div>
-                <div className={`text-sm flex items-center ${isPositive ? 'text-agri-success' : 'text-agri-danger'}`}>
+                <div className="text-2xl font-bold">{item.currentSales} {item.unit}</div>
+                <div className={`text-sm flex items-center ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                   {isPositive ? (
                     <ArrowUp className="h-3 w-3 mr-1" />
                   ) : (
@@ -197,7 +197,7 @@ const GuadeloupeHarvestTracking = () => {
                   <span>{isPositive ? '+' : ''}{change} {item.unit} ({isPositive ? '+' : ''}{changePercent}%)</span>
                 </div>
                 <div className="mt-2 text-xs text-muted-foreground">
-                  Qualité: <span className="font-medium">{item.quality}</span>
+                  Qualidade: <span className="font-medium">{item.quality}</span>
                 </div>
               </div>
             );
@@ -205,7 +205,7 @@ const GuadeloupeHarvestTracking = () => {
         </div>
         
         <EditableTable
-          data={harvestData}
+          data={salesData}
           columns={columns}
           onUpdate={handleTableUpdate}
           onDelete={handleDeleteRow}

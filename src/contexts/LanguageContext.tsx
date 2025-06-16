@@ -27,7 +27,7 @@ const translations = {
     
     // Auth
     'auth.welcome': 'Bem-vindo ao Exclusive Piscinas',
-    'auth.subtitle': 'Sistema de Gestão Inteligente',
+    'auth.subtitle': 'Sistema de Gestão de Piscinas de Fibra',
     'auth.email': 'Email',
     'auth.password': 'Senha',
     'auth.fullName': 'Nome Completo',
@@ -47,7 +47,7 @@ const translations = {
     'auth.logoutError': 'Erro ao sair',
     
     // Dashboard
-    'dashboard.welcome': 'Bem-vindo ao seu painel de controle',
+    'dashboard.welcome': 'Bem-vindo ao seu painel de piscinas',
     'dashboard.subtitle': 'Gerencie suas piscinas e operações de forma eficiente',
     'dashboard.quickActions': 'Ações Rápidas',
     'dashboard.viewPools': 'Ver Piscinas',
@@ -77,7 +77,7 @@ const translations = {
     
     // Auth
     'auth.welcome': 'Welcome to Exclusive Piscinas',
-    'auth.subtitle': 'Intelligent Management System',
+    'auth.subtitle': 'Fiberglass Pool Management System',
     'auth.email': 'Email',
     'auth.password': 'Password',
     'auth.fullName': 'Full Name',
@@ -97,8 +97,8 @@ const translations = {
     'auth.logoutError': 'Error logging out',
     
     // Dashboard
-    'dashboard.welcome': 'Welcome to your control panel',
-    'dashboard.subtitle': 'Manage your pools and operations efficiently',
+    'dashboard.welcome': 'Welcome to your pool management panel',
+    'dashboard.subtitle': 'Efficiently manage your pools and operations',
     'dashboard.quickActions': 'Quick Actions',
     'dashboard.viewPools': 'View Pools',
     'dashboard.addMaintenance': 'Add Maintenance',
