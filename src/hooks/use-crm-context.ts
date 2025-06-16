@@ -1,7 +1,8 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { exportToCSV, exportToExcel, exportToPDF, importFromCSV, printData } from '../utils/crm-data-operations';
 
-// Types pour le contexte CRM global
+// Types para o contexto CRM global
 interface CRMContextState {
   lastSync: Date;
   isRefreshing: boolean;
@@ -15,106 +16,86 @@ interface CRMContextState {
   printModuleData: (moduleName: string, options?: any) => Promise<boolean>;
 }
 
-// Hook personnalisé pour gérer le contexte global du CRM
+// Hook personalizado para gerenciar o contexto global do CRM
 export const useCRMContext = (): CRMContextState => {
   const [lastSync, setLastSync] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [moduleData, setModuleData] = useState<Record<string, any>>({
-    parcelles: {
-      items: [
-        { id: 1, nom: "Parcelle Nord", surface: 12.5, culture: "Canne à Sucre", statut: "En culture" },
-        { id: 2, nom: "Parcelle Sud", surface: 8.3, culture: "Banane", statut: "En récolte" },
-        { id: 3, nom: "Parcelle Est", surface: 5.2, culture: "Ananas", statut: "En préparation" }
-      ],
+    piscinas: {
+      items: [],
       columns: [
         { key: "id", header: "ID" },
-        { key: "nom", header: "Nom" },
-        { key: "surface", header: "Surface (ha)" },
-        { key: "culture", header: "Culture" },
-        { key: "statut", header: "Statut" }
+        { key: "nome", header: "Nome" },
+        { key: "tamanho", header: "Tamanho" },
+        { key: "tipo", header: "Tipo" },
+        { key: "status", header: "Status" }
       ]
     },
-    cultures: {
-      items: [
-        { id: 1, nom: "Canne à Sucre", variete: "R579", dateDebut: "2023-03-15", dateFin: "2024-03-15" },
-        { id: 2, nom: "Banane", variete: "Grande Naine", dateDebut: "2023-02-10", dateFin: "2023-12-10" },
-        { id: 3, nom: "Ananas", variete: "MD-2", dateDebut: "2023-05-05", dateFin: "2024-06-01" }
-      ],
+    manutencoes: {
+      items: [],
       columns: [
         { key: "id", header: "ID" },
-        { key: "nom", header: "Culture" },
-        { key: "variete", header: "Variété" },
-        { key: "dateDebut", header: "Date de début" },
-        { key: "dateFin", header: "Date de fin" }
+        { key: "nome", header: "Manutenção" },
+        { key: "tipo", header: "Tipo" },
+        { key: "dataInicio", header: "Data de Início" },
+        { key: "dataFim", header: "Data de Fim" }
       ]
     },
-    finances: {
-      items: [
-        { id: 1, type: "revenu", montant: 15000, description: "Vente récolte canne", date: "2023-06-15" },
-        { id: 2, type: "depense", montant: 5000, description: "Achat fertilisants", date: "2023-05-10" },
-        { id: 3, type: "revenu", montant: 8500, description: "Vente bananes", date: "2023-07-20" }
-      ],
+    financeiro: {
+      items: [],
       columns: [
         { key: "id", header: "ID" },
-        { key: "date", header: "Date" },
-        { key: "type", header: "Type" },
-        { key: "description", header: "Description" },
-        { key: "montant", header: "Montant (€)" }
+        { key: "data", header: "Data" },
+        { key: "tipo", header: "Tipo" },
+        { key: "descricao", header: "Descrição" },
+        { key: "valor", header: "Valor (R$)" }
       ]
     },
-    statistiques: {
-      items: [
-        { periode: "2023-T1", cultureId: 1, rendement: 8.2, revenus: 12500, couts: 4200 },
-        { periode: "2023-T2", cultureId: 1, rendement: 8.5, revenus: 13000, couts: 4100 },
-        { periode: "2023-T1", cultureId: 2, rendement: 15.3, revenus: 7800, couts: 2100 }
-      ],
+    estatisticas: {
+      items: [],
       columns: [
-        { key: "periode", header: "Période" },
-        { key: "cultureId", header: "Culture ID" },
-        { key: "rendement", header: "Rendement (t/ha)" },
-        { key: "revenus", header: "Revenus (€)" },
-        { key: "couts", header: "Coûts (€)" }
+        { key: "periodo", header: "Período" },
+        { key: "produtoId", header: "Produto ID" },
+        { key: "vendas", header: "Vendas" },
+        { key: "receitas", header: "Receitas (R$)" },
+        { key: "custos", header: "Custos (R$)" }
       ]
     },
-    inventaire: {
-      items: [
-        { id: 1, nom: "Engrais NPK", categorie: "Intrants", quantite: 500, unite: "kg", prix: 2.5 },
-        { id: 2, nom: "Pesticide Bio", categorie: "Intrants", quantite: 50, unite: "L", prix: 18.75 },
-        { id: 3, nom: "Tracteur", categorie: "Matériel", quantite: 2, unite: "unités", prix: 25000 }
-      ],
+    estoque: {
+      items: [],
       columns: [
         { key: "id", header: "ID" },
-        { key: "nom", header: "Nom" },
-        { key: "categorie", header: "Catégorie" },
-        { key: "quantite", header: "Quantité" },
-        { key: "unite", header: "Unité" },
-        { key: "prix", header: "Prix unitaire (€)" }
+        { key: "nome", header: "Nome" },
+        { key: "categoria", header: "Categoria" },
+        { key: "quantidade", header: "Quantidade" },
+        { key: "unidade", header: "Unidade" },
+        { key: "preco", header: "Preço unitário (R$)" }
       ]
     }
   });
   const [activeModules, setActiveModules] = useState<string[]>([
-    'parcelles',
-    'cultures',
-    'finances',
-    'statistiques',
-    'inventaire'
+    'piscinas',
+    'manutencoes',
+    'financeiro',
+    'estatisticas',
+    'estoque'
   ]);
   
-  // Nom de l'entreprise
-  const companyName = 'Agri Dom';
+  // Nome da empresa
+  const companyName = 'Exclusive Piscinas';
 
-  // Synchronisation des données à travers tous les modules du CRM
+  // Sincronização dos dados através de todos os módulos do CRM
   const syncDataAcrossCRM = useCallback(() => {
     setIsRefreshing(true);
     
-    // Simuler un temps de synchronisation
+    // Simular um tempo de sincronização
     setTimeout(() => {
       setLastSync(new Date());
       setIsRefreshing(false);
     }, 1500);
   }, []);
 
-  // Mettre à jour les données d'un module spécifique
+  // Atualizar os dados de um módulo específico
   const updateModuleData = useCallback((moduleName: string, data: any) => {
     setModuleData(prevData => ({
       ...prevData,
@@ -124,13 +105,13 @@ export const useCRMContext = (): CRMContextState => {
       }
     }));
     
-    // Mettre à jour la date de dernière synchronisation
+    // Atualizar a data de última sincronização
     setLastSync(new Date());
   }, []);
 
-  // Récupérer les données d'un module spécifique
+  // Recuperar os dados de um módulo específico
   const getModuleData = useCallback((moduleName: string) => {
-    return moduleData[moduleName] || {};
+    return moduleData[moduleName] || { items: [], columns: [] };
   }, [moduleData]);
 
   // Export module data to specified format
@@ -143,7 +124,8 @@ export const useCRMContext = (): CRMContextState => {
     const data = customData || getModuleData(moduleName)?.items;
     
     if (!data || !Array.isArray(data) || data.length === 0) {
-      return false;
+      console.log(`Nenhum dado encontrado para exportar do módulo ${moduleName}`);
+      return true; // Return true para não mostrar erro quando não há dados
     }
     
     try {
@@ -152,12 +134,10 @@ export const useCRMContext = (): CRMContextState => {
       // Handle special cases like technical sheets and guides
       if (moduleName === 'fiche_technique') {
         return await exportToPDF(data, `${companyName}_fiche_technique`, {
-          title: `${companyName} - Fiche Technique`,
+          title: `${companyName} - Ficha Técnica`,
           landscape: false,
           template: 'technical_sheet'
         });
-      } else if (moduleName === 'guide_cultures') {
-        return true;
       }
       
       // Standard formats
@@ -177,7 +157,7 @@ export const useCRMContext = (): CRMContextState => {
       
       return success;
     } catch (error) {
-      console.error(`Error exporting ${moduleName} data:`, error);
+      console.error(`Erro ao exportar dados do ${moduleName}:`, error);
       return false;
     }
   }, [getModuleData, companyName]);
@@ -197,7 +177,7 @@ export const useCRMContext = (): CRMContextState => {
       
       return false;
     } catch (error) {
-      console.error(`Error importing ${moduleName} data:`, error);
+      console.error(`Erro ao importar dados do ${moduleName}:`, error);
       return false;
     }
   }, [updateModuleData]);
@@ -207,16 +187,16 @@ export const useCRMContext = (): CRMContextState => {
     const data = getModuleData(moduleName);
     
     if (!data || !data.items || !Array.isArray(data.items) || data.items.length === 0) {
-      return false;
+      console.log(`Nenhum dado encontrado para imprimir do módulo ${moduleName}`);
+      return true; // Return true para não mostrar erro quando não há dados
     }
     
     const moduleNames: Record<string, string> = {
-      parcelles: "Parcelles",
-      cultures: "Cultures",
-      finances: "Finances",
-      statistiques: "Statistiques",
-      inventaire: "Inventaire",
-      fiche_technique: "Fiche Technique"
+      piscinas: "Piscinas",
+      manutencoes: "Manutenções",
+      financeiro: "Financeiro",
+      estatisticas: "Estatísticas",
+      estoque: "Estoque"
     };
     
     const title = `${companyName} - ${moduleNames[moduleName] || moduleName}`;
@@ -229,19 +209,10 @@ export const useCRMContext = (): CRMContextState => {
         options
       );
     } catch (error) {
-      console.error(`Error printing ${moduleName} data:`, error);
+      console.error(`Erro ao imprimir dados do ${moduleName}:`, error);
       return false;
     }
   }, [getModuleData, companyName]);
-
-  // Synchronisation initiale au chargement
-  useEffect(() => {
-    const initialSync = setTimeout(() => {
-      syncDataAcrossCRM();
-    }, 1000);
-    
-    return () => clearTimeout(initialSync);
-  }, [syncDataAcrossCRM]);
 
   return {
     lastSync,

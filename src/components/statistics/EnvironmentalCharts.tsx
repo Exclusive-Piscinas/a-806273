@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Check, Layers, ArrowRight } from 'lucide-react';
 import { useStatistics } from '../../contexts/StatisticsContext';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -8,8 +7,94 @@ const EnvironmentalCharts = () => {
   const { environmentalData } = useStatistics();
   const { indicators, carbonFootprint, waterUsage, biodiversity } = environmentalData;
 
+  // Mostrar estado vazio quando não há dados
+  if (!indicators || indicators.length === 0) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Indicadores de Qualidade</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">
+                Nenhum indicador de qualidade disponível ainda.
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Configure os indicadores de qualidade para acompanhar a performance da sua empresa.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sustentabilidade</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center">
+              <div className="text-center">
+                <div className="inline-block relative">
+                  <div className="w-32 h-32 rounded-full border-8 border-gray-200"></div>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <span className="text-2xl font-bold">0%</span>
+                    <span className="text-xs text-muted-foreground">vs N-1</span>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm">
+                  Aguardando dados de sustentabilidade.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Eficiência Energética</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center">
+              <div className="text-center">
+                <div className="inline-block relative">
+                  <div className="w-32 h-32 rounded-full border-8 border-gray-200"></div>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <span className="text-2xl font-bold">0%</span>
+                    <span className="text-xs text-muted-foreground">vs N-1</span>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm">
+                  Aguardando dados de eficiência energética.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Qualidade do Produto</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center">
+              <div className="text-center">
+                <div className="inline-block relative">
+                  <div className="w-32 h-32 rounded-full border-8 border-gray-200"></div>
+                  <div className="absolute inset-0 flex items-center justify-center flex-col">
+                    <span className="text-2xl font-bold">0%</span>
+                    <span className="text-xs text-muted-foreground">vs N-1</span>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm">
+                  Aguardando dados de qualidade.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {/* Conteúdo será mostrado quando houver dados */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
@@ -25,7 +110,7 @@ const EnvironmentalCharts = () => {
                 </div>
               </div>
               <p className="mt-4 text-sm">
-                Redução do impacto ambiental através de práticas sustentáveis na fabricação.
+                Redução do impacto ambiental através de práticas sustentáveis.
               </p>
             </div>
           </CardContent>
@@ -33,7 +118,7 @@ const EnvironmentalCharts = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Eficiência energética</CardTitle>
+            <CardTitle>Eficiência Energética</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center">
             <div className="text-center">
@@ -45,7 +130,7 @@ const EnvironmentalCharts = () => {
                 </div>
               </div>
               <p className="mt-4 text-sm">
-                Melhoria na eficiência energética dos processos de produção.
+                Melhoria na eficiência energética dos processos.
               </p>
             </div>
           </CardContent>
@@ -53,7 +138,7 @@ const EnvironmentalCharts = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Qualidade do produto</CardTitle>
+            <CardTitle>Qualidade do Produto</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center">
             <div className="text-center">
@@ -71,83 +156,6 @@ const EnvironmentalCharts = () => {
           </CardContent>
         </Card>
       </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Indicadores de qualidade</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted text-xs uppercase">
-                <tr>
-                  <th className="px-4 py-2 text-left">Indicador</th>
-                  <th className="px-4 py-2 text-left">Valor atual</th>
-                  <th className="px-4 py-2 text-left">Meta</th>
-                  <th className="px-4 py-2 text-left">Tendência</th>
-                  <th className="px-4 py-2 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {indicators.map((item, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="px-4 py-3 font-medium">{item.indicator}</td>
-                    <td className="px-4 py-3">{item.current}</td>
-                    <td className="px-4 py-3">{item.target}</td>
-                    <td className="px-4 py-3 text-green-600">{item.trend}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
-                        item.status === 'Atteint' 
-                          ? 'bg-green-100 text-green-600' 
-                          : 'bg-yellow-100 text-yellow-600'
-                      }`}>
-                        {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Certificações e compromissos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="border rounded-lg p-4 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-2">
-                <Check className="h-8 w-8 text-green-600" />
-              </div>
-              <h4 className="font-medium mb-1">ISO 9001</h4>
-              <p className="text-sm text-center text-muted-foreground">
-                Certificado desde 2019
-              </p>
-            </div>
-            <div className="border rounded-lg p-4 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mb-2">
-                <Layers className="h-8 w-8 text-yellow-600" />
-              </div>
-              <h4 className="font-medium mb-1">Qualidade Premium</h4>
-              <p className="text-sm text-center text-muted-foreground">
-                Fibra de alta resistência
-              </p>
-            </div>
-            <div className="border rounded-lg p-4 flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-2">
-                <ArrowRight className="h-8 w-8 text-blue-600" />
-              </div>
-              <h4 className="font-medium mb-1">Garantia Estendida</h4>
-              <p className="text-sm text-center text-muted-foreground">
-                15 anos de garantia
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
