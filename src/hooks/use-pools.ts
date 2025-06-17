@@ -34,7 +34,7 @@ export const usePools = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setPools(data || []);
+      setPools((data || []) as PoolProject[]);
     } catch (error) {
       console.error('Erro ao buscar projetos:', error);
       toast.error('Erro ao carregar projetos de piscinas');
@@ -58,9 +58,9 @@ export const usePools = () => {
         .single();
 
       if (error) throw error;
-      setPools(prev => [data, ...prev]);
+      setPools(prev => [data as PoolProject, ...prev]);
       toast.success('Projeto de piscina criado com sucesso!');
-      return data;
+      return data as PoolProject;
     } catch (error) {
       console.error('Erro ao criar projeto:', error);
       toast.error('Erro ao criar projeto de piscina');
@@ -78,9 +78,9 @@ export const usePools = () => {
         .single();
 
       if (error) throw error;
-      setPools(prev => prev.map(pool => pool.id === id ? data : pool));
+      setPools(prev => prev.map(pool => pool.id === id ? data as PoolProject : pool));
       toast.success('Projeto atualizado com sucesso!');
-      return data;
+      return data as PoolProject;
     } catch (error) {
       console.error('Erro ao atualizar projeto:', error);
       toast.error('Erro ao atualizar projeto');

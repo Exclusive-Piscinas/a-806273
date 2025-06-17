@@ -173,7 +173,7 @@ export const importInventoryFromCSV = (
   }
 };
 
-export const exportInventoryToPDF = (inventoryData: InventoryItem[], fileName?: string) => {
+export const exportInventoryToPDF = (inventoryData: any[], fileName?: string) => {
   toast.info("Preparando o PDF do estoque...");
   setTimeout(() => {
     toast.success("PDF do estoque gerado com sucesso", {

@@ -30,7 +30,7 @@ export const useFinancial = () => {
         .order('data_transacao', { ascending: false });
 
       if (error) throw error;
-      setTransactions(data || []);
+      setTransactions((data || []) as FinancialTransaction[]);
     } catch (error) {
       console.error('Erro ao buscar transações:', error);
       toast.error('Erro ao carregar transações financeiras');
@@ -54,9 +54,9 @@ export const useFinancial = () => {
         .single();
 
       if (error) throw error;
-      setTransactions(prev => [data, ...prev]);
+      setTransactions(prev => [data as FinancialTransaction, ...prev]);
       toast.success('Transação criada com sucesso!');
-      return data;
+      return data as FinancialTransaction;
     } catch (error) {
       console.error('Erro ao criar transação:', error);
       toast.error('Erro ao criar transação');
@@ -74,9 +74,9 @@ export const useFinancial = () => {
         .single();
 
       if (error) throw error;
-      setTransactions(prev => prev.map(tx => tx.id === id ? data : tx));
+      setTransactions(prev => prev.map(tx => tx.id === id ? data as FinancialTransaction : tx));
       toast.success('Transação atualizada com sucesso!');
-      return data;
+      return data as FinancialTransaction;
     } catch (error) {
       console.error('Erro ao atualizar transação:', error);
       toast.error('Erro ao atualizar transação');

@@ -30,7 +30,7 @@ export const useClients = () => {
         .order('nome');
 
       if (error) throw error;
-      setClients(data || []);
+      setClients((data || []) as Client[]);
     } catch (error) {
       console.error('Erro ao buscar clientes:', error);
       toast.error('Erro ao carregar clientes');
@@ -54,9 +54,9 @@ export const useClients = () => {
         .single();
 
       if (error) throw error;
-      setClients(prev => [...prev, data]);
+      setClients(prev => [...prev, data as Client]);
       toast.success('Cliente adicionado com sucesso!');
-      return data;
+      return data as Client;
     } catch (error) {
       console.error('Erro ao adicionar cliente:', error);
       toast.error('Erro ao adicionar cliente');
@@ -74,9 +74,9 @@ export const useClients = () => {
         .single();
 
       if (error) throw error;
-      setClients(prev => prev.map(client => client.id === id ? data : client));
+      setClients(prev => prev.map(client => client.id === id ? data as Client : client));
       toast.success('Cliente atualizado com sucesso!');
-      return data;
+      return data as Client;
     } catch (error) {
       console.error('Erro ao atualizar cliente:', error);
       toast.error('Erro ao atualizar cliente');

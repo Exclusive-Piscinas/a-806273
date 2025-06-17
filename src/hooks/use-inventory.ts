@@ -33,7 +33,7 @@ export const useInventory = () => {
         .order('nome');
 
       if (error) throw error;
-      setItems(data || []);
+      setItems((data || []) as InventoryItem[]);
     } catch (error) {
       console.error('Erro ao buscar estoque:', error);
       toast.error('Erro ao carregar estoque');
@@ -57,9 +57,9 @@ export const useInventory = () => {
         .single();
 
       if (error) throw error;
-      setItems(prev => [...prev, data]);
+      setItems(prev => [...prev, data as InventoryItem]);
       toast.success('Item adicionado ao estoque!');
-      return data;
+      return data as InventoryItem;
     } catch (error) {
       console.error('Erro ao adicionar item:', error);
       toast.error('Erro ao adicionar item ao estoque');
@@ -77,9 +77,9 @@ export const useInventory = () => {
         .single();
 
       if (error) throw error;
-      setItems(prev => prev.map(item => item.id === id ? data : item));
+      setItems(prev => prev.map(item => item.id === id ? data as InventoryItem : item));
       toast.success('Item atualizado com sucesso!');
-      return data;
+      return data as InventoryItem;
     } catch (error) {
       console.error('Erro ao atualizar item:', error);
       toast.error('Erro ao atualizar item');
