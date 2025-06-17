@@ -82,6 +82,52 @@ const translations = {
     'finance.previousPeriod': 'período anterior',
     'finance.compared': 'comparado ao',
     
+    // Inventory
+    'inventory.title': 'Gestão de Estoque',
+    'inventory.subtitle': 'Controle de materiais e equipamentos para piscinas',
+    'inventory.items': 'Itens',
+    'inventory.pools': 'Piscinas',
+    'inventory.maintenance': 'Manutenção',
+    'inventory.add': 'Adicionar Item',
+    'inventory.search': 'Pesquisar',
+    'inventory.export': 'Exportar',
+    'inventory.import': 'Importar',
+    'inventory.template': 'Baixar Modelo',
+    
+    // Pools
+    'pools.title': 'Gestão de Piscinas',
+    'pools.subtitle': 'Gerencie projetos e tipos de piscinas',
+    'pools.projects': 'Projetos de Piscinas',
+    'pools.add': 'Adicionar Piscina',
+    'pools.search': 'Pesquisar piscina...',
+    'pools.filter': 'Filtrar',
+    'pools.all': 'Todas as piscinas',
+    
+    // Maintenance
+    'maintenance.title': 'Manutenções',
+    'maintenance.subtitle': 'Acompanhe e gerencie manutenções das piscinas',
+    'maintenance.schedule': 'Programar Manutenção',
+    'maintenance.history': 'Histórico',
+    'maintenance.alerts': 'Alertas',
+    
+    // Documents
+    'documents.title': 'Documentos',
+    'documents.subtitle': 'Gerencie documentos e contratos da empresa',
+    'documents.contracts': 'Contratos',
+    'documents.invoices': 'Faturas',
+    'documents.reports': 'Relatórios',
+    'documents.add': 'Adicionar Documento',
+    
+    // Statistics
+    'stats.title': 'Estatísticas e Análises',
+    'stats.subtitle': 'Visualize dados do seu negócio de piscinas',
+    'stats.performance': 'Indicadores',
+    'stats.sales': 'Vendas',
+    'stats.detailed': 'Detalhado',
+    'stats.export': 'Exportar',
+    'stats.sync': 'Sincronizar',
+    'stats.alerts': 'Alertas',
+    
     // Language selector
     'language.select': 'Idioma',
     'language.portuguese': 'Português',

@@ -4,17 +4,12 @@ import PageLayout from '../components/layout/PageLayout';
 import PageHeader from '../components/layout/PageHeader';
 import TabContainer, { TabItem } from '../components/layout/TabContainer';
 import Inventory from '../components/Inventory';
-import GuadeloupeSpecificCrops from '../components/GuadeloupeSpecificCrops';
-import GuadeloupeHarvestTracking from '../components/GuadeloupeHarvestTracking';
-import GuadeloupeWeatherAlerts from '../components/GuadeloupeWeatherAlerts';
 import { Button } from '../components/ui/button';
-import { Download, Plus, Upload, FileUp, FileDown, BarChart2, Calendar, Package } from 'lucide-react';
+import { Download, Plus, Upload, FileUp, FileDown, Package } from 'lucide-react';
 import { DatePickerWithRange } from '../components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
-import { useToast } from "@/hooks/use-toast";
 import usePageMetadata from '../hooks/use-page-metadata';
 import { downloadInventoryTemplate } from '../components/inventory/ImportExportFunctions';
-import { StatisticsProvider } from '../contexts/StatisticsContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,13 +19,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const InventoryPage = () => {
-  const { toast: shadowToast } = useToast();
   const [activeTab, setActiveTab] = useState<string>('inventory');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useLanguage();
   
   const { 
     title, 
@@ -38,18 +34,12 @@ const InventoryPage = () => {
     handleTitleChange, 
     handleDescriptionChange 
   } = usePageMetadata({
-    defaultTitle: 'Gestão de Estoque',
-    defaultDescription: 'Gerencie seu estoque de materiais e equipamentos para piscinas'
+    defaultTitle: t('inventory.title'),
+    defaultDescription: t('inventory.subtitle')
   });
 
   const handleExportData = () => {
-    if (activeTab === 'inventory') {
-      console.log("Exportação de dados de estoque iniciada");
-    } else if (activeTab === 'pools') {
-      console.log("Exportação de dados de piscinas");
-    } else if (activeTab === 'maintenance') {
-      console.log("Exportação de dados de manutenção");
-    }
+    console.log("Exportação de dados de estoque iniciada");
   };
 
   const handleImportClick = () => {
@@ -70,11 +60,7 @@ const InventoryPage = () => {
   };
 
   const handleAddItem = () => {
-    const actionText = activeTab === 'inventory' ? 'item de estoque' : 
-                      activeTab === 'pools' ? 'piscina' : 
-                      activeTab === 'maintenance' ? 'manutenção' : 'item';
-                      
-    console.log(`Funcionalidade de adição de ${actionText} ativada`);
+    console.log(`Funcionalidade de adição de item ativada`);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,31 +77,27 @@ const InventoryPage = () => {
       <div className="flex flex-wrap gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="whitespace-nowrap transition-colors hover:bg-gray-100">
+            <Button variant="outline" className="whitespace-nowrap">
               <Download className="mr-2 h-4 w-4" />
-              Exportar
+              {t('inventory.export')}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white border shadow-lg">
+          <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleExportData} className="cursor-pointer">
               <FileDown className="mr-2 h-4 w-4" />
               Exportar CSV
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleExportData} className="cursor-pointer">
-              <BarChart2 className="mr-2 h-4 w-4" />
-              Exportar PDF
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="whitespace-nowrap transition-colors hover:bg-gray-100">
+            <Button variant="outline" className="whitespace-nowrap">
               <Upload className="mr-2 h-4 w-4" />
-              Importar
+              {t('inventory.import')}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white border shadow-lg">
+          <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleImportClick} className="cursor-pointer">
               <FileUp className="mr-2 h-4 w-4" />
               Importar arquivo
@@ -123,7 +105,7 @@ const InventoryPage = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDownloadTemplate} className="cursor-pointer">
               <Package className="mr-2 h-4 w-4" />
-              Baixar modelo
+              {t('inventory.template')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -136,14 +118,9 @@ const InventoryPage = () => {
           className="hidden" 
         />
         
-        <Button 
-          onClick={handleAddItem} 
-          className="whitespace-nowrap transition-colors hover:bg-green-700"
-        >
+        <Button onClick={handleAddItem}>
           <Plus className="mr-2 h-4 w-4" />
-          {activeTab === 'inventory' ? 'Adicionar Item' : 
-           activeTab === 'pools' ? 'Adicionar Piscina' : 
-           activeTab === 'maintenance' ? 'Adicionar Manutenção' : 'Adicionar'}
+          {t('inventory.add')}
         </Button>
       </div>
     );
@@ -158,7 +135,7 @@ const InventoryPage = () => {
       >
         <div className="relative flex-grow">
           <Input 
-            placeholder={`Pesquisar em ${activeTab === 'inventory' ? 'estoque' : activeTab === 'pools' ? 'piscinas' : 'manutenções'}`} 
+            placeholder={t('inventory.search')}
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-8"
@@ -185,48 +162,22 @@ const InventoryPage = () => {
     );
   };
 
-  const poolsContent = (
-    <StatisticsProvider>
-      <div className="space-y-8">
-        <GuadeloupeSpecificCrops />
-        <GuadeloupeHarvestTracking />
-      </div>
-    </StatisticsProvider>
-  );
-
   const tabs: TabItem[] = [
     {
       value: 'inventory',
-      label: 'Estoque',
+      label: t('inventory.items'),
       content: <Inventory dateRange={dateRange} searchTerm={searchTerm} />
-    },
-    {
-      value: 'pools',
-      label: 'Piscinas',
-      content: poolsContent
-    },
-    {
-      value: 'maintenance',
-      label: 'Manutenção',
-      content: <GuadeloupeWeatherAlerts />
     }
   ];
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    
-    const tabLabels = {
-      inventory: 'o Estoque',
-      pools: 'as Piscinas',
-      maintenance: 'a Manutenção'
-    };
-    
-    console.log(`Você está visualizando agora ${tabLabels[value as keyof typeof tabLabels] || value}`);
+    console.log(`Você está visualizando agora o ${value}`);
   };
 
   return (
     <PageLayout>
-      <div className="p-6 animate-enter">
+      <div className="p-6">
         <PageHeader 
           title={title}
           description={description}

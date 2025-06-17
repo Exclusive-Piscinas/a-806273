@@ -29,12 +29,10 @@ const Navbar = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   
-  // Fechar menu mobile quando a rota muda
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
   
-  // Gerenciar tema
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -77,7 +75,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Toggle de navegação mobile */}
       <div className="fixed top-4 left-4 z-50 md:hidden">
         <button 
           onClick={toggleSidebar} 
@@ -88,7 +85,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Sidebar de navegação */}
       <aside 
         className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-900 border-r border-border shadow-lg transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
@@ -97,14 +93,9 @@ const Navbar = () => {
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-3">
             <Link to="/" className="flex items-center space-x-2">
-              <img 
-                src="/exclusive-piscinas-logo.png" 
-                alt="Exclusive Piscinas" 
-                className="h-8 w-8"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
+              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">EP</span>
+              </div>
               <span className="text-lg font-bold text-foreground">Exclusive Piscinas</span>
             </Link>
             <button 
@@ -167,7 +158,6 @@ const Navbar = () => {
         </div>
       </aside>
 
-      {/* Overlay para mobile */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden backdrop-blur-sm transition-opacity duration-300"

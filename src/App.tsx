@@ -11,6 +11,7 @@ import CropsPage from "./pages/CropsPage";
 import InventoryPage from "./pages/InventoryPage";
 import FinancePage from "./pages/FinancePage";
 import StatsPage from "./pages/StatsPage";
+import DocumentsPage from "./pages/DocumentsPage";
 import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 import { CRMProvider } from "./contexts/CRMContext";
@@ -21,7 +22,6 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { trackPageView } from "./utils/analytics";
 
-// Configuração das rotas com proteção
 const routes = [
   { path: "/auth", element: <AuthPage />, protected: false },
   { path: "/", element: <Index />, protected: true },
@@ -31,31 +31,27 @@ const routes = [
   { path: "/inventaire", element: <InventoryPage />, protected: true },
   { path: "/finances", element: <FinancePage />, protected: true },
   { path: "/statistiques", element: <StatisticsProvider><StatsPage /></StatisticsProvider>, protected: true },
-  { path: "/rapports", element: <Navigate to="/statistiques" replace />, protected: true },
+  { path: "/rapports", element: <DocumentsPage />, protected: true },
   { path: "/parametres", element: <Navigate to="/" replace />, protected: true },
   { path: "/dashboard", element: <Navigate to="/" replace />, protected: true },
   { path: "*", element: <NotFound />, protected: false }
 ];
 
-// Criar cliente de query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutos
-      gcTime: 10 * 60 * 1000, // 10 minutos
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     },
   },
 });
 
-// Componente para gerenciar mudanças de rota
 const RouterChangeHandler = () => {
   useEffect(() => {
-    // Rolar para o topo na mudança de rota
     window.scrollTo(0, 0);
     
-    // Rastrear visualização de página para analytics
     const currentPath = window.location.pathname;
     const pageName = currentPath === '/' ? 'painel' : currentPath.replace(/^\//, '');
     trackPageView(pageName);
@@ -64,7 +60,6 @@ const RouterChangeHandler = () => {
   return null;
 };
 
-// Componente principal da aplicação
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
