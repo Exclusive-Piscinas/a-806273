@@ -63,7 +63,7 @@ const Navbar = () => {
     { title: t('nav.inventory'), path: '/inventaire', icon: Package },
     { title: t('nav.finance'), path: '/finances', icon: Wallet },
     { title: t('nav.reports'), path: '/statistiques', icon: BarChart2 },
-    { title: t('nav.documents'), path: '/rapports', icon: FileText },
+    { title: t('nav.documents'), path: '/documentos', icon: FileText },
     { title: t('nav.settings'), path: '/parametres', icon: Settings },
   ];
 
@@ -93,10 +93,7 @@ const Navbar = () => {
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-3">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EP</span>
-              </div>
-              <span className="text-lg font-bold text-foreground">Exclusive Piscinas</span>
+              <img src="/exclusive-logo.svg" alt="Exclusive Piscinas" className="h-10 w-auto" />
             </Link>
             <button 
               onClick={toggleTheme} 

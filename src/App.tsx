@@ -31,7 +31,8 @@ const routes = [
   { path: "/inventaire", element: <InventoryPage />, protected: true },
   { path: "/finances", element: <FinancePage />, protected: true },
   { path: "/statistiques", element: <StatisticsProvider><StatsPage /></StatisticsProvider>, protected: true },
-  { path: "/rapports", element: <DocumentsPage />, protected: true },
+  { path: "/documentos", element: <DocumentsPage />, protected: true },
+  { path: "/rapports", element: <Navigate to="/documentos" replace />, protected: true },
   { path: "/parametres", element: <Navigate to="/" replace />, protected: true },
   { path: "/dashboard", element: <Navigate to="/" replace />, protected: true },
   { path: "*", element: <NotFound />, protected: false }
