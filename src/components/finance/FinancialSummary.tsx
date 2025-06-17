@@ -3,8 +3,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Banknote, Receipt } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FinancialSummaryProps {
   totalIncome: number;
@@ -25,16 +23,13 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
   className = '',
   onCardClick
 }) => {
-  const isMobile = useIsMobile();
-  const { t } = useLanguage();
-  
   const balance = totalIncome - totalExpenses;
   const previousBalance = previousIncome && previousExpenses 
     ? previousIncome - previousExpenses 
     : undefined;
   
   const getPercentChange = (current: number, previous: number | undefined) => {
-    if (!previous) return null;
+    if (!previous || previous === 0) return null;
     return ((current - previous) / previous) * 100;
   };
   
@@ -62,24 +57,24 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
       variants={container}
       initial="hidden"
       animate="show"
-      className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 ${className}`}
+      className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ${className}`}
     >
       <motion.div variants={item}>
         <Card 
           className={`bg-white hover:shadow-md transition-shadow ${onCardClick ? 'cursor-pointer' : ''}`} 
           onClick={() => onCardClick && onCardClick('income')}
         >
-          <CardHeader className="pb-1 md:pb-2 px-3 md:px-6 pt-3 md:pt-6">
-            <CardTitle className="text-base md:text-lg flex items-center">
-              <Banknote className="h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 text-green-500" />
-              {t('finance.income')}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center">
+              <Banknote className="h-5 w-5 mr-2 text-green-500" />
+              Receitas
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              {period ? `${t('finance.totalIncome')} ${period}` : t('finance.totalIncome')}
+            <CardDescription>
+              {period ? `Total de receitas ${period}` : 'Total de receitas'}
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
-            <p className="text-xl md:text-2xl font-bold text-green-600">
+          <CardContent>
+            <p className="text-2xl font-bold text-green-600">
               {totalIncome.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -89,16 +84,16 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
             </p>
             
             {incomeChange !== null && (
-              <p className={`text-xs md:text-sm flex items-center ${
+              <p className={`text-sm flex items-center ${
                 incomeChange > 0 ? 'text-green-600' : incomeChange < 0 ? 'text-red-600' : 'text-muted-foreground'
               }`}>
                 {incomeChange > 0 ? (
-                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingUp className="h-4 w-4 mr-1" />
                 ) : incomeChange < 0 ? (
-                  <TrendingDown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingDown className="h-4 w-4 mr-1" />
                 ) : null}
                 {incomeChange > 0 ? '+' : ''}{incomeChange.toFixed(1)}%
-                {!isMobile && ` ${t('finance.compared')} ${t('finance.previousPeriod')}`}
+                {' comparado ao período anterior'}
               </p>
             )}
           </CardContent>
@@ -110,17 +105,17 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
           className={`bg-white hover:shadow-md transition-shadow ${onCardClick ? 'cursor-pointer' : ''}`} 
           onClick={() => onCardClick && onCardClick('expenses')}
         >
-          <CardHeader className="pb-1 md:pb-2 px-3 md:px-6 pt-3 md:pt-6">
-            <CardTitle className="text-base md:text-lg flex items-center">
-              <Receipt className="h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 text-red-500" />
-              {t('finance.expenses')}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center">
+              <Receipt className="h-5 w-5 mr-2 text-red-500" />
+              Despesas
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              {period ? `${t('finance.totalExpenses')} ${period}` : t('finance.totalExpenses')}
+            <CardDescription>
+              {period ? `Total de despesas ${period}` : 'Total de despesas'}
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
-            <p className="text-xl md:text-2xl font-bold text-red-600">
+          <CardContent>
+            <p className="text-2xl font-bold text-red-600">
               {totalExpenses.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -130,16 +125,16 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
             </p>
             
             {expensesChange !== null && (
-              <p className={`text-xs md:text-sm flex items-center ${
+              <p className={`text-sm flex items-center ${
                 expensesChange < 0 ? 'text-green-600' : expensesChange > 0 ? 'text-red-600' : 'text-muted-foreground'
               }`}>
                 {expensesChange > 0 ? (
-                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingUp className="h-4 w-4 mr-1" />
                 ) : expensesChange < 0 ? (
-                  <TrendingDown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingDown className="h-4 w-4 mr-1" />
                 ) : null}
                 {expensesChange > 0 ? '+' : ''}{expensesChange.toFixed(1)}%
-                {!isMobile && ` ${t('finance.compared')} ${t('finance.previousPeriod')}`}
+                {' comparado ao período anterior'}
               </p>
             )}
           </CardContent>
@@ -151,17 +146,17 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
           className={`bg-white hover:shadow-md transition-shadow ${onCardClick ? 'cursor-pointer' : ''}`}
           onClick={() => onCardClick && onCardClick('balance')}
         >
-          <CardHeader className="pb-1 md:pb-2 px-3 md:px-6 pt-3 md:pt-6">
-            <CardTitle className="text-base md:text-lg flex items-center">
-              <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-1.5 md:mr-2 text-blue-500" />
-              {t('finance.balance')}
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center">
+              <DollarSign className="h-5 w-5 mr-2 text-blue-500" />
+              Saldo
             </CardTitle>
-            <CardDescription className="text-xs md:text-sm">
-              {period ? `Saldo para ${period}` : 'Receitas - Despesas'}
+            <CardDescription>
+              {period ? `Saldo ${period}` : 'Receitas - Despesas'}
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
-            <p className={`text-xl md:text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <CardContent>
+            <p className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {balance.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
@@ -171,16 +166,16 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({
             </p>
             
             {balanceChange !== null && (
-              <p className={`text-xs md:text-sm flex items-center ${
+              <p className={`text-sm flex items-center ${
                 balanceChange > 0 ? 'text-green-600' : balanceChange < 0 ? 'text-red-600' : 'text-muted-foreground'
               }`}>
                 {balanceChange > 0 ? (
-                  <TrendingUp className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingUp className="h-4 w-4 mr-1" />
                 ) : balanceChange < 0 ? (
-                  <TrendingDown className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <TrendingDown className="h-4 w-4 mr-1" />
                 ) : null}
                 {balanceChange > 0 ? '+' : ''}{balanceChange.toFixed(1)}%
-                {!isMobile && ` ${t('finance.compared')} ${t('finance.previousPeriod')}`}
+                {' comparado ao período anterior'}
               </p>
             )}
           </CardContent>
