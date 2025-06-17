@@ -17,7 +17,7 @@ import {
   Eye,
   Edit,
   Trash2,
-  FileContract,
+  File,
   Receipt,
   BarChart3
 } from 'lucide-react';
@@ -25,6 +25,7 @@ import { DatePickerWithRange } from '../components/ui/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import usePageMetadata from '../hooks/use-page-metadata';
 
 interface Document {
   id: string;
@@ -41,6 +42,16 @@ const DocumentsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const { t } = useLanguage();
+
+  const { 
+    title, 
+    description, 
+    handleTitleChange, 
+    handleDescriptionChange 
+  } = usePageMetadata({
+    defaultTitle: t('documents.title'),
+    defaultDescription: t('documents.subtitle')
+  });
 
   const [documents] = useState<Document[]>([
     {
@@ -89,7 +100,7 @@ const DocumentsPage = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'contract': return <FileContract className="h-4 w-4" />;
+      case 'contract': return <File className="h-4 w-4" />;
       case 'invoice': return <Receipt className="h-4 w-4" />;
       case 'report': return <BarChart3 className="h-4 w-4" />;
       default: return <FileText className="h-4 w-4" />;
@@ -287,8 +298,10 @@ const DocumentsPage = () => {
     <PageLayout>
       <div className="p-6">
         <PageHeader 
-          title={t('documents.title')}
-          description={t('documents.subtitle')}
+          title={title}
+          description={description}
+          onTitleChange={handleTitleChange}
+          onDescriptionChange={handleDescriptionChange}
           actions={renderTabActions()}
           icon={<FileText className="h-6 w-6" />}
           filterArea={renderFilterArea()}
