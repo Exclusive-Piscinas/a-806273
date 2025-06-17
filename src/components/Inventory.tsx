@@ -192,8 +192,8 @@ const Inventory: React.FC<InventoryProps> = ({
     }
   };
 
-  const handleQuantityChange = async (itemId: string, newQuantity: number) => {
-    await handleUpdateItem(itemId, 'quantidade', newQuantity);
+  const handleQuantityChange = async (itemId: string, field: string, value: any) => {
+    await handleUpdateItem(itemId, field, value);
   };
 
   const inventoryColumns: Column[] = [

@@ -4,7 +4,7 @@ import { AlertTriangle } from 'lucide-react';
 import { EditableField } from '../ui/editable-field';
 
 interface InventoryAlert {
-  id: number;
+  id: string;
   name: string;
   current: number;
   min: number;
@@ -13,7 +13,7 @@ interface InventoryAlert {
 
 interface InventoryAlertsProps {
   alerts: InventoryAlert[];
-  onQuantityChange: (id: number, field: string, value: any) => void;
+  onQuantityChange: (id: string, field: string, value: any) => void;
 }
 
 const InventoryAlerts: React.FC<InventoryAlertsProps> = ({ alerts, onQuantityChange }) => {
@@ -52,7 +52,7 @@ const InventoryAlerts: React.FC<InventoryAlertsProps> = ({ alerts, onQuantityCha
               <EditableField
                 value={alert.current}
                 type="number"
-                onSave={(value) => onQuantityChange(alert.id, 'quantity', Number(value))}
+                onSave={(value) => onQuantityChange(alert.id, 'quantidade', Number(value))}
                 className="inline-block"
               />
               <span className="mx-1">|</span>
@@ -60,7 +60,7 @@ const InventoryAlerts: React.FC<InventoryAlertsProps> = ({ alerts, onQuantityCha
               <EditableField
                 value={alert.min}
                 type="number"
-                onSave={(value) => onQuantityChange(alert.id, 'minQuantity', Number(value))}
+                onSave={(value) => onQuantityChange(alert.id, 'quantidade_minima', Number(value))}
                 className="inline-block"
               />
             </div>
