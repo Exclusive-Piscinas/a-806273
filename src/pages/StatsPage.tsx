@@ -7,12 +7,13 @@ import { ChartConfig } from '../components/ui/chart-config';
 import { EditableTable, Column } from '../components/ui/editable-table';
 import { EditableField } from '../components/ui/editable-field';
 import { StatisticsProvider } from '../contexts/StatisticsContext';
-import { BarChart, PieChart, TrendingUp, Download, Filter, RefreshCw, Bell, Printer, Eye } from 'lucide-react';
+import { BarChart, PieChart, TrendingUp, Download, RefreshCw, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import PreviewPrintButton from '@/components/common/PreviewPrintButton';
 
 interface PerformanceData {
+  id: string;
   name: string;
   current: number;
   target: number;
@@ -25,33 +26,23 @@ const StatsPage = () => {
   const [activeView, setActiveView] = useState<'performance' | 'harvest' | 'detailed'>('performance');
   const [lastSyncDate, setLastSyncDate] = useState<Date>(new Date());
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [connectedModules, setConnectedModules] = useState<string[]>(['piscinas', 'produtos', 'financeiro']);
+  const [connectedModules] = useState<string[]>(['piscinas', 'estoque', 'financeiro']);
   
-  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([
-    { name: 'Vendas Piscinas Pequenas', current: 75, target: 85, unit: 'vendas/mês' },
-    { name: 'Qualidade Premium', current: 88, target: 95, unit: '%' },
-    { name: 'Lucratividade Spas', current: 70, target: 80, unit: '%' },
-    { name: 'Satisfação Cliente', current: 92, target: 95, unit: '%' },
-    { name: 'Inovação Produtos', current: 60, target: 75, unit: '%' },
-  ]);
+  const [performanceData, setPerformanceData] = useState<PerformanceData[]>([]);
   
   useEffect(() => {
-    const initialSync = setTimeout(() => {
-      console.log('Os módulos Piscinas, Produtos e Financeiro estão agora conectados às estatísticas');
-    }, 1000);
-    
-    return () => clearTimeout(initialSync);
-  }, []);
+    console.log('Página de estatísticas carregada com sucesso');
+    console.log(`Módulos conectados: ${connectedModules.join(', ')}`);
+  }, [connectedModules]);
   
   const syncData = () => {
     setIsSyncing(true);
-    console.log('Recuperação dos dados mais recentes de todos os módulos conectados...');
+    console.log('Sincronizando dados dos módulos...');
     
     setTimeout(() => {
       setIsSyncing(false);
       setLastSyncDate(new Date());
-      console.log('Todas as estatísticas estão atualizadas com os dados mais recentes dos módulos');
-      console.log("Os indicadores de performance foram recalculados com os dados mais recentes");
+      console.log('Dados sincronizados com sucesso');
     }, 2000);
   };
   
@@ -74,9 +65,7 @@ const StatsPage = () => {
     
     newData[rowIndex] = updatedRow;
     setPerformanceData(newData);
-    
-    console.log(`O indicador ${updatedRow.name} foi atualizado com sucesso.`);
-    console.log(`Os módulos conectados foram informados da atualização de ${updatedRow.name}`);
+    console.log(`Indicador ${updatedRow.name} atualizado`);
   };
   
   const handleDeleteRow = (rowIndex: number) => {
@@ -84,47 +73,36 @@ const StatsPage = () => {
     const deletedItem = newData[rowIndex];
     newData.splice(rowIndex, 1);
     setPerformanceData(newData);
-    
-    console.log(`O indicador ${deletedItem.name} foi excluído com sucesso.`);
-    console.log(`Os módulos conectados foram informados da exclusão de ${deletedItem.name}`);
+    console.log(`Indicador ${deletedItem.name} excluído`);
   };
   
   const handleAddRow = (newRow: Record<string, any>) => {
     const typedRow: PerformanceData = {
-      name: String(newRow.name || ''),
+      id: `perf_${Date.now()}`,
+      name: String(newRow.name || 'Novo Indicador'),
       current: Number(newRow.current || 0),
       target: Number(newRow.target || 0),
       unit: String(newRow.unit || '%'),
     };
     setPerformanceData([...performanceData, typedRow]);
-    
-    console.log(`O indicador ${typedRow.name} foi adicionado com sucesso.`);
-    console.log(`Os módulos conectados foram informados da adição de ${typedRow.name}`);
+    console.log(`Indicador ${typedRow.name} adicionado`);
   };
 
   const handleTitleChange = (value: string | number) => {
     setPageTitle(String(value));
-    console.log('O título da página foi atualizado.');
   };
 
   const handleDescriptionChange = (value: string | number) => {
     setPageDescription(String(value));
-    console.log('A descrição da página foi atualizada.');
   };
   
   const handleViewChange = (view: 'performance' | 'harvest' | 'detailed') => {
     setActiveView(view);
-    console.log(`Você está agora visualizando a aba ${
-      view === 'performance' ? 'Indicadores de performance' : 
-      view === 'harvest' ? 'Acompanhamento de vendas' : 'Estatísticas detalhadas'
-    }`);
-    
-    console.log(`Os módulos conectados foram adaptados para a visualização ${view === 'performance' ? 'indicadores' : view === 'harvest' ? 'vendas' : 'detalhada'}`);
+    console.log(`Visualização alterada para: ${view}`);
   };
   
   const handleExportData = () => {
-    console.log('Os dados estatísticos foram exportados com sucesso.');
-    console.log("Os dados exportados estão disponíveis para todos os módulos");
+    console.log('Dados exportados com sucesso');
   };
 
   return (
@@ -160,7 +138,7 @@ const StatsPage = () => {
                   />
                 </p>
                 <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                  <span className="mr-2">Módulos conectados: {connectedModules.join(', ')}</span>
+                  <span className="mr-2">Módulos: {connectedModules.join(', ')}</span>
                   <span>Última sincronização: {lastSyncDate.toLocaleString()}</span>
                 </div>
               </div>
@@ -205,7 +183,7 @@ const StatsPage = () => {
                 <PreviewPrintButton
                   data={performanceData}
                   moduleName="performance-indicators"
-                  title="Indicadores de Performance de Piscinas"
+                  title="Indicadores de Performance"
                   columns={[
                     { key: "name", header: "Indicador" },
                     { key: "current", header: "Valor atual" },
@@ -214,6 +192,7 @@ const StatsPage = () => {
                   ]}
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                   variant="ghost"
+                  size="sm"
                 />
                 
                 <button 
@@ -230,13 +209,11 @@ const StatsPage = () => {
                   disabled={isSyncing}
                 >
                   <RefreshCw className={`h-4 w-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`} />
-                  {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
+                  {isSyncing ? 'Sync...' : 'Sync'}
                 </button>
                 
                 <button 
-                  onClick={() => {
-                    console.log('Suas preferências de notificação foram atualizadas');
-                  }}
+                  onClick={() => console.log('Alertas configurados')}
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                 >
                   <Bell className="h-4 w-4 mr-1.5" />
@@ -253,28 +230,37 @@ const StatsPage = () => {
                 className="mb-8"
               >
                 <ChartConfig 
-                  title="Indicadores de performance de piscinas"
-                  description="Acompanhe suas performances em relação às suas metas para produtos de piscinas"
-                  onTitleChange={(title) => {
-                    console.log('O título do gráfico foi atualizado.');
-                  }}
-                  onDescriptionChange={(desc) => {
-                    console.log('A descrição do gráfico foi atualizada.');
-                  }}
-                  onOptionsChange={(options) => {
-                    console.log('As opções do gráfico foram atualizadas.');
-                  }}
+                  title="Indicadores de Performance"
+                  description="Acompanhe suas performances em relação às suas metas"
+                  onTitleChange={() => console.log('Título atualizado')}
+                  onDescriptionChange={() => console.log('Descrição atualizada')}
+                  onOptionsChange={() => console.log('Opções atualizadas')}
                   className="mb-6"
                 >
                   <div className="p-4">
-                    <EditableTable
-                      data={performanceData}
-                      columns={columns}
-                      onUpdate={handleTableUpdate}
-                      onDelete={handleDeleteRow}
-                      onAdd={handleAddRow}
-                      className="border-none"
-                    />
+                    {performanceData.length > 0 ? (
+                      <EditableTable
+                        data={performanceData}
+                        columns={columns}
+                        onUpdate={handleTableUpdate}
+                        onDelete={handleDeleteRow}
+                        onAdd={handleAddRow}
+                        className="border-0"
+                      />
+                    ) : (
+                      <div className="text-center py-12">
+                        <TrendingUp className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                          Nenhum indicador configurado
+                        </h3>
+                        <p className="text-gray-500 mb-4">
+                          Adicione indicadores para monitorar sua performance
+                        </p>
+                        <Button onClick={() => handleAddRow({})}>
+                          Adicionar Primeiro Indicador
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </ChartConfig>
               </motion.div>

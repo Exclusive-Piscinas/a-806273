@@ -85,37 +85,25 @@ export const useStatistics = () => {
   return context;
 };
 
-// Dados iniciais vazios para projeto limpo
-const initialYieldData: YieldData[] = [];
-
-const initialProfitabilityData: FinancialData[] = [];
-
-const initialCostData: CostData[] = [];
-
-const initialRevenueData: any[] = [];
-
-const initialEnvironmentalIndicators: EnvironmentalData[] = [];
-
 export const StatisticsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [yieldData, setYieldData] = useState<YieldData[]>(initialYieldData);
+  const [yieldData, setYieldData] = useState<YieldData[]>([]);
   const [financialData, setFinancialData] = useState({
-    profitabilityByParcel: initialProfitabilityData,
-    costAnalysis: initialCostData,
-    revenueByMonth: initialRevenueData
+    profitabilityByParcel: [],
+    costAnalysis: [],
+    revenueByMonth: []
   });
   const [environmentalData, setEnvironmentalData] = useState({
-    indicators: initialEnvironmentalIndicators,
+    indicators: [],
     carbonFootprint: 0,
     waterUsage: 0,
     biodiversity: 0
   });
-  const [forecastData, setForecastData] = useState(initialRevenueData);
+  const [forecastData, setForecastData] = useState([]);
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('year');
   const [cropFilter, setCropFilter] = useState('all');
   
   // Função para atualizar os dados com base nos filtros
   const updateDataWithFilters = (period: string, crop: string) => {
-    // Implementação dos filtros quando houver dados
     console.log(`Filtros aplicados: período ${period}, produto ${crop}`);
   };
   
