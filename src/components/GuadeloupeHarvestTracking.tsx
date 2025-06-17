@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { EditableField } from './ui/editable-field';
@@ -142,7 +141,6 @@ const GuadeloupeHarvestTracking = () => {
                 title={title}
                 columns={printColumns}
                 variant="outline"
-                size="sm"
               />
               <Button
                 onClick={() => handleAddRow({})}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Statistics from '../components/Statistics';
@@ -192,7 +191,6 @@ const StatsPage = () => {
                   ]}
                   className="px-3 py-1.5 rounded-md flex items-center text-sm bg-muted hover:bg-muted/80 transition-colors"
                   variant="ghost"
-                  size="sm"
                 />
                 
                 <button 
