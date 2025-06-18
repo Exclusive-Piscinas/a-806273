@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -34,6 +34,23 @@ const sanitizeString = (input: string): string => {
 export const useFinancial = () => {
   const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Calculate totals using useMemo for performance
+  const totalRevenue = useMemo(() => {
+    return transactions
+      .filter(t => t.tipo === 'receita' && t.status === 'pago')
+      .reduce((sum, t) => sum + t.valor, 0);
+  }, [transactions]);
+
+  const totalExpenses = useMemo(() => {
+    return transactions
+      .filter(t => t.tipo === 'despesa' && t.status === 'pago')
+      .reduce((sum, t) => sum + t.valor, 0);
+  }, [transactions]);
+
+  const netProfit = useMemo(() => {
+    return totalRevenue - totalExpenses;
+  }, [totalRevenue, totalExpenses]);
 
   const fetchTransactions = async () => {
     try {
@@ -173,6 +190,9 @@ export const useFinancial = () => {
   return {
     transactions,
     loading,
+    totalRevenue,
+    totalExpenses,
+    netProfit,
     addTransaction,
     updateTransaction,
     deleteTransaction,

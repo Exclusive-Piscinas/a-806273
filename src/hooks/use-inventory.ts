@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -37,6 +37,15 @@ const sanitizeString = (input: string): string => {
 export const useInventory = () => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Calculate inventory analytics using useMemo for performance
+  const lowStockItems = useMemo(() => {
+    return inventory.filter(item => item.quantidade <= item.quantidade_minima);
+  }, [inventory]);
+
+  const totalValue = useMemo(() => {
+    return inventory.reduce((sum, item) => sum + (item.quantidade * item.preco_unitario), 0);
+  }, [inventory]);
 
   const fetchInventory = async () => {
     try {
@@ -163,6 +172,8 @@ export const useInventory = () => {
     inventory,
     items: inventory, // alias para compatibilidade
     loading,
+    lowStockItems,
+    totalValue,
     addItem,
     updateItem,
     deleteItem,
