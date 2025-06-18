@@ -28,12 +28,21 @@ import { useFinancial } from '@/hooks/use-financial';
 const Index = () => {
   const { t } = useLanguage();
   const { pools, loading: poolsLoading } = usePools();
-  const { items, lowStockItems, totalValue } = useInventory();
-  const { totalRevenue, totalExpenses, netProfit, transactions } = useFinancial();
+  const { items, lowStockItems, totalValue, loading: inventoryLoading } = useInventory();
+  const { totalRevenue, totalExpenses, netProfit, transactions, loading: financialLoading } = useFinancial();
 
   const activePools = pools.filter(pool => ['orcamento', 'aprovado', 'em_construcao'].includes(pool.status));
   const pendingMaintenance = pools.filter(pool => pool.status === 'em_construcao');
   const pendingTransactions = transactions.filter(tx => tx.status === 'pendente');
+
+  // Safe number formatting with fallbacks
+  const formatCurrency = (value: number | undefined) => {
+    return (value || 0).toLocaleString('pt-BR');
+  };
+
+  const formatPercentage = (value: number | undefined) => {
+    return Math.round(value || 0);
+  };
 
   return (
     <PageLayout>
@@ -84,10 +93,10 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-purple-900">
-                R$ {totalValue.toLocaleString('pt-BR')}
+                R$ {formatCurrency(totalValue)}
               </div>
               <p className="text-xs text-purple-700 mt-1">
-                {items.length} itens • {lowStockItems.length} em falta
+                {items.length} itens • {lowStockItems?.length || 0} em falta
               </p>
             </CardContent>
           </Card>
@@ -99,7 +108,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-900">
-                R$ {netProfit.toLocaleString('pt-BR')}
+                R$ {formatCurrency(netProfit)}
               </div>
               <p className="text-xs text-green-700 mt-1">
                 {pendingTransactions.length} transações pendentes
@@ -119,7 +128,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-green-600 mb-2">
-                R$ {totalRevenue.toLocaleString('pt-BR')}
+                R$ {formatCurrency(totalRevenue)}
               </div>
               <p className="text-sm text-gray-600">Total de receitas pagas</p>
             </CardContent>
@@ -134,7 +143,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-red-600 mb-2">
-                R$ {totalExpenses.toLocaleString('pt-BR')}
+                R$ {formatCurrency(totalExpenses)}
               </div>
               <p className="text-sm text-gray-600">Total de despesas pagas</p>
             </CardContent>
@@ -149,7 +158,7 @@ const Index = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-blue-600 mb-2">
-                {totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0}%
+                {totalRevenue && totalRevenue > 0 ? formatPercentage((netProfit || 0) / totalRevenue * 100) : 0}%
               </div>
               <p className="text-sm text-gray-600">Margem de lucro</p>
             </CardContent>
@@ -211,14 +220,14 @@ const Index = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {lowStockItems.length > 0 || pendingTransactions.length > 0 ? (
+              {(lowStockItems?.length || 0) > 0 || pendingTransactions.length > 0 ? (
                 <div className="space-y-3">
-                  {lowStockItems.length > 0 && (
+                  {(lowStockItems?.length || 0) > 0 && (
                     <div className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                       <AlertTriangle className="h-5 w-5 text-yellow-600" />
                       <div>
                         <p className="text-sm font-medium text-yellow-800">
-                          {lowStockItems.length} itens com estoque baixo
+                          {lowStockItems?.length || 0} itens com estoque baixo
                         </p>
                         <p className="text-xs text-yellow-600">
                           Verifique o estoque de materiais

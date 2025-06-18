@@ -61,7 +61,7 @@ const RouterChangeHandler = () => {
     } catch (error) {
       console.error('Error in RouterChangeHandler:', error);
     }
-  }, [location.pathname]);
+  }, [window.location.pathname]);
   
   return null;
 };
@@ -75,7 +75,7 @@ const App = () => {
             <AppSettingsProvider>
               <CRMProvider>
                 <BrowserRouter>
-                  <TooltipProvider>
+                  <To>
                     <RouterChangeHandler />
                     <Routes>
                       {routes.map((route) => (
