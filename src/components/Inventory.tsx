@@ -25,7 +25,7 @@ const Inventory: React.FC<InventoryProps> = ({
   dateRange,
   searchTerm: externalSearchTerm
 }) => {
-  const { items: inventoryData, loading, addItem, updateItem, deleteItem } = useInventory();
+  const { inventory: inventoryData, loading, addItem, updateItem, deleteItem } = useInventory();
   const [searchTerm, setSearchTerm] = useState(externalSearchTerm || '');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('nome');
@@ -75,7 +75,8 @@ const Inventory: React.FC<InventoryProps> = ({
     return 0;
   });
 
-  const categories = ['all', ...new Set(inventoryData.map(item => item.categoria))];
+  // Fix categories to ensure type safety
+  const categories: string[] = ['all', ...Array.from(new Set(inventoryData.map(item => item.categoria)))];
 
   const handleExportData = () => {
     if (view === 'list') {

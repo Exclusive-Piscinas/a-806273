@@ -56,7 +56,7 @@ export const useInventory = () => {
     }
   };
 
-  const addInventoryItem = async (item: Omit<InventoryItem, 'id' | 'created_at' | 'updated_at'>) => {
+  const addItem = async (item: Omit<InventoryItem, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const validationError = validateInventoryItem(item);
       if (validationError) {
@@ -87,7 +87,7 @@ export const useInventory = () => {
 
       if (error) throw error;
 
-      setInventory(prev => [data, ...prev]);
+      setInventory(prev => [data as InventoryItem, ...prev]);
       toast.success('Item adicionado ao estoque!');
       return data;
     } catch (error) {
@@ -99,7 +99,7 @@ export const useInventory = () => {
     }
   };
 
-  const updateInventoryItem = async (id: string, updates: Partial<InventoryItem>) => {
+  const updateItem = async (id: string, updates: Partial<InventoryItem>) => {
     try {
       const validationError = validateInventoryItem(updates);
       if (validationError) {
@@ -125,7 +125,7 @@ export const useInventory = () => {
 
       if (error) throw error;
 
-      setInventory(prev => prev.map(item => item.id === id ? data : item));
+      setInventory(prev => prev.map(item => item.id === id ? data as InventoryItem : item));
       toast.success('Item atualizado com sucesso!');
       return data;
     } catch (error) {
@@ -137,7 +137,7 @@ export const useInventory = () => {
     }
   };
 
-  const deleteInventoryItem = async (id: string) => {
+  const deleteItem = async (id: string) => {
     try {
       const { error } = await supabase
         .from('estoque_piscinas')
@@ -161,10 +161,14 @@ export const useInventory = () => {
 
   return {
     inventory,
+    items: inventory, // alias para compatibilidade
     loading,
-    addInventoryItem,
-    updateInventoryItem,
-    deleteInventoryItem,
+    addItem,
+    updateItem,
+    deleteItem,
+    addInventoryItem: addItem, // alias para compatibilidade
+    updateInventoryItem: updateItem, // alias para compatibilidade
+    deleteInventoryItem: deleteItem, // alias para compatibilidade
     refetch: fetchInventory
   };
 };

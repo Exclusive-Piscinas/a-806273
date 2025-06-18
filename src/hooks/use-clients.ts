@@ -48,7 +48,14 @@ export const useClients = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setClients(data || []);
+      
+      // Type assertion with validation
+      const typedData = (data || []).map(item => ({
+        ...item,
+        tipo_cliente: (item.tipo_cliente === 'pessoa_juridica' ? 'pessoa_juridica' : 'pessoa_fisica') as 'pessoa_fisica' | 'pessoa_juridica'
+      })) as Client[];
+      
+      setClients(typedData);
     } catch (error) {
       console.error('Erro ao buscar clientes:', error);
       toast.error('Erro ao carregar clientes');
@@ -100,9 +107,14 @@ export const useClients = () => {
 
       if (error) throw error;
 
-      setClients(prev => [data, ...prev]);
+      const newClient = {
+        ...data,
+        tipo_cliente: (data.tipo_cliente === 'pessoa_juridica' ? 'pessoa_juridica' : 'pessoa_fisica') as 'pessoa_fisica' | 'pessoa_juridica'
+      } as Client;
+
+      setClients(prev => [newClient, ...prev]);
       toast.success('Cliente adicionado com sucesso!');
-      return data;
+      return newClient;
     } catch (error) {
       console.error('Erro ao adicionar cliente:', error);
       if (error instanceof Error && !['Nome inválido', 'Email inválido', 'Telefone inválido'].includes(error.message)) {
@@ -149,9 +161,14 @@ export const useClients = () => {
 
       if (error) throw error;
 
-      setClients(prev => prev.map(client => client.id === id ? data : client));
+      const updatedClient = {
+        ...data,
+        tipo_cliente: (data.tipo_cliente === 'pessoa_juridica' ? 'pessoa_juridica' : 'pessoa_fisica') as 'pessoa_fisica' | 'pessoa_juridica'
+      } as Client;
+
+      setClients(prev => prev.map(client => client.id === id ? updatedClient : client));
       toast.success('Cliente atualizado com sucesso!');
-      return data;
+      return updatedClient;
     } catch (error) {
       console.error('Erro ao atualizar cliente:', error);
       if (error instanceof Error && !['Nome inválido', 'Email inválido', 'Telefone inválido'].includes(error.message)) {

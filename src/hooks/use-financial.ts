@@ -44,7 +44,15 @@ export const useFinancial = () => {
         .order('data_transacao', { ascending: false });
 
       if (error) throw error;
-      setTransactions(data || []);
+      
+      // Type assertion with validation
+      const typedData = (data || []).map(item => ({
+        ...item,
+        tipo: (item.tipo === 'despesa' ? 'despesa' : 'receita') as 'receita' | 'despesa',
+        status: (['pago', 'cancelado'].includes(item.status) ? item.status : 'pendente') as 'pendente' | 'pago' | 'cancelado'
+      })) as FinancialTransaction[];
+      
+      setTransactions(typedData);
     } catch (error) {
       console.error('Erro ao buscar transações:', error);
       toast.error('Erro ao carregar transações financeiras');
@@ -81,9 +89,15 @@ export const useFinancial = () => {
 
       if (error) throw error;
 
-      setTransactions(prev => [data, ...prev]);
+      const newTransaction = {
+        ...data,
+        tipo: (data.tipo === 'despesa' ? 'despesa' : 'receita') as 'receita' | 'despesa',
+        status: (['pago', 'cancelado'].includes(data.status) ? data.status : 'pendente') as 'pendente' | 'pago' | 'cancelado'
+      } as FinancialTransaction;
+
+      setTransactions(prev => [newTransaction, ...prev]);
       toast.success('Transação adicionada com sucesso!');
-      return data;
+      return newTransaction;
     } catch (error) {
       console.error('Erro ao adicionar transação:', error);
       if (error instanceof Error && !error.message.includes('deve')) {
@@ -116,9 +130,15 @@ export const useFinancial = () => {
 
       if (error) throw error;
 
-      setTransactions(prev => prev.map(transaction => transaction.id === id ? data : transaction));
+      const updatedTransaction = {
+        ...data,
+        tipo: (data.tipo === 'despesa' ? 'despesa' : 'receita') as 'receita' | 'despesa',
+        status: (['pago', 'cancelado'].includes(data.status) ? data.status : 'pendente') as 'pendente' | 'pago' | 'cancelado'
+      } as FinancialTransaction;
+
+      setTransactions(prev => prev.map(transaction => transaction.id === id ? updatedTransaction : transaction));
       toast.success('Transação atualizada com sucesso!');
-      return data;
+      return updatedTransaction;
     } catch (error) {
       console.error('Erro ao atualizar transação:', error);
       if (error instanceof Error && !error.message.includes('deve')) {
