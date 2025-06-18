@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Grid, List } from 'lucide-react';
+import { Plus, Search, Filter, Grid, List, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -8,11 +8,13 @@ import { Badge } from '@/components/ui/badge';
 import PageLayout from '@/components/layout/PageLayout';
 import PoolCard from '@/components/pools/PoolCard';
 import PoolForm from '@/components/pools/PoolForm';
+import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { usePools, PoolProject } from '@/hooks/use-pools';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 
 const ParcelsPage = () => {
+  const navigate = useNavigate();
   const { pools, loading, addPool, updatePool, deletePool } = usePools();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingPool, setEditingPool] = useState<PoolProject | null>(null);
@@ -60,7 +62,7 @@ const ParcelsPage = () => {
   };
 
   const handleViewDetails = (pool: PoolProject) => {
-    console.log('Ver detalhes do projeto:', pool);
+    navigate(`/parcelles/${pool.id}`);
   };
 
   const getStatusCount = (status: string) => {
@@ -70,17 +72,7 @@ const ParcelsPage = () => {
   if (loading) {
     return (
       <PageLayout>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-10 w-32" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <Skeleton key={i} className="h-64 w-full" />
-            ))}
-          </div>
-        </div>
+        <LoadingSpinner message="Carregando projetos de piscinas..." />
       </PageLayout>
     );
   }
@@ -88,19 +80,21 @@ const ParcelsPage = () => {
   return (
     <PageLayout>
       <div className="space-y-6">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('pools.projects')}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Projetos de Piscinas</h1>
             <p className="text-gray-600 mt-1">
-              {t('pools.subtitle')}
+              Gerencie todos os seus projetos de piscinas
             </p>
           </div>
           <Button onClick={handleAddPool} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="h-4 w-4 mr-2" />
-            {t('pools.add')}
+            Novo Projeto
           </Button>
         </div>
 
+        {/* Status cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-yellow-800">{getStatusCount('orcamento')}</div>
@@ -124,12 +118,13 @@ const ParcelsPage = () => {
           </div>
         </div>
 
+        {/* Filters and search */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-3 flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
-                placeholder={t('pools.search')}
+                placeholder="Buscar projetos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full sm:w-80"
@@ -183,6 +178,7 @@ const ParcelsPage = () => {
           </div>
         </div>
 
+        {/* Results info */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600">
             {filteredPools.length} projeto{filteredPools.length !== 1 ? 's' : ''} encontrado{filteredPools.length !== 1 ? 's' : ''}
@@ -202,6 +198,7 @@ const ParcelsPage = () => {
           )}
         </div>
 
+        {/* Content */}
         {filteredPools.length > 0 ? (
           <div className={`${
             viewMode === 'grid' 
@@ -244,6 +241,7 @@ const ParcelsPage = () => {
           </div>
         )}
 
+        {/* Form Modal */}
         <PoolForm
           isOpen={isFormOpen}
           onClose={() => {

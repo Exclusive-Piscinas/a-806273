@@ -1,10 +1,9 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Edit, Trash2, Eye, MapPin, Calendar, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, MapPin, Phone, Mail, Calendar, DollarSign, User, Waves } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { PoolProject } from '@/hooks/use-pools';
 
 interface PoolCardProps {
@@ -14,122 +13,149 @@ interface PoolCardProps {
   onViewDetails: (pool: PoolProject) => void;
 }
 
-const statusColors = {
-  orcamento: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  aprovado: 'bg-blue-100 text-blue-800 border-blue-200',
-  em_construcao: 'bg-orange-100 text-orange-800 border-orange-200',
-  finalizado: 'bg-green-100 text-green-800 border-green-200',
-  cancelado: 'bg-red-100 text-red-800 border-red-200'
-};
-
-const statusLabels = {
-  orcamento: 'Orçamento',
-  aprovado: 'Aprovado',
-  em_construcao: 'Em Construção',
-  finalizado: 'Finalizado',
-  cancelado: 'Cancelado'
-};
-
-const poolTypeLabels = {
-  pequena: 'Pequena',
-  media: 'Média',
-  grande: 'Grande',
-  olimpica: 'Olímpica',
-  infantil: 'Infantil'
-};
-
 const PoolCard: React.FC<PoolCardProps> = ({ pool, onEdit, onDelete, onViewDetails }) => {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'orcamento':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'aprovado':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'em_construcao':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'finalizado':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'cancelado':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'orcamento': return 'Orçamento';
+      case 'aprovado': return 'Aprovado';
+      case 'em_construcao': return 'Em Construção';
+      case 'finalizado': return 'Finalizado';
+      case 'cancelado': return 'Cancelado';
+      default: return status;
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'pequena': return 'Pequena';
+      case 'media': return 'Média';
+      case 'grande': return 'Grande';
+      case 'olimpica': return 'Olímpica';
+      case 'infantil': return 'Infantil';
+      default: return type;
+    }
+  };
+
+  const formatCurrency = (value?: number) => {
+    if (!value) return 'Não informado';
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Não definida';
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
+    <Card className="hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <User className="h-5 w-5 text-blue-600" />
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg text-gray-900 mb-1">
               {pool.nome_cliente}
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <Badge className={`text-xs ${statusColors[pool.status]}`}>
-                {statusLabels[pool.status]}
-              </Badge>
-              <Badge variant="outline" className="text-xs flex items-center gap-1">
-                <Waves className="h-3 w-3" />
-                {poolTypeLabels[pool.tipo_piscina]}
-              </Badge>
+            </h3>
+            <div className="flex items-center text-sm text-gray-600 mb-2">
+              <MapPin className="h-4 w-4 mr-1" />
+              <span>{pool.endereco || 'Endereço não informado'}</span>
             </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onViewDetails(pool)}>
-                Ver Detalhes
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onEdit(pool)}>
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => onDelete(pool.id)}
-                className="text-red-600"
-              >
-                Excluir
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Badge className={getStatusColor(pool.status)}>
+            {getStatusLabel(pool.status)}
+          </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-3">
-          {pool.endereco && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <MapPin className="h-4 w-4" />
-              <span className="truncate">{pool.endereco}</span>
-            </div>
-          )}
-          
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            {pool.telefone_cliente && (
-              <div className="flex items-center gap-2 text-gray-600">
-                <Phone className="h-4 w-4" />
-                <span className="truncate">{pool.telefone_cliente}</span>
-              </div>
-            )}
-            
-            {pool.email_cliente && (
-              <div className="flex items-center gap-2 text-gray-600">
-                <Mail className="h-4 w-4" />
-                <span className="truncate">{pool.email_cliente}</span>
-              </div>
-            )}
+
+      <CardContent className="space-y-3">
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <span className="text-gray-500">Tipo:</span>
+            <p className="font-medium">{getTypeLabel(pool.tipo_piscina)}</p>
           </div>
-
-          {pool.tamanho_metros && (
-            <div className="text-sm text-gray-600">
-              <strong>Tamanho:</strong> {pool.tamanho_metros}
-              {pool.profundidade && ` • Profundidade: ${pool.profundidade}m`}
+          <div>
+            <span className="text-gray-500">Tamanho:</span>
+            <p className="font-medium">{pool.tamanho_metros || 'Não definido'}</p>
+          </div>
+          {pool.profundidade && (
+            <div>
+              <span className="text-gray-500">Profundidade:</span>
+              <p className="font-medium">{pool.profundidade}m</p>
             </div>
           )}
-
-          <div className="flex items-center justify-between pt-2 border-t">
-            {pool.orcamento_total && (
-              <div className="flex items-center gap-1 text-green-600 font-semibold">
-                <DollarSign className="h-4 w-4" />
-                R$ {pool.orcamento_total.toLocaleString('pt-BR')}
-              </div>
-            )}
-            
-            {pool.data_previsao_fim && (
-              <div className="flex items-center gap-1 text-sm text-gray-500">
-                <Calendar className="h-4 w-4" />
-                {new Date(pool.data_previsao_fim).toLocaleDateString('pt-BR')}
-              </div>
-            )}
+          <div>
+            <span className="text-gray-500">Orçamento:</span>
+            <p className="font-medium text-green-600">{formatCurrency(pool.orcamento_total)}</p>
           </div>
         </div>
+
+        {pool.data_inicio && (
+          <div className="flex items-center text-sm text-gray-600">
+            <Calendar className="h-4 w-4 mr-1" />
+            <span>Início: {formatDate(pool.data_inicio)}</span>
+          </div>
+        )}
+
+        {pool.email_cliente && (
+          <div className="text-sm text-gray-600">
+            <span className="font-medium">Email:</span> {pool.email_cliente}
+          </div>
+        )}
+
+        {pool.telefone_cliente && (
+          <div className="text-sm text-gray-600">
+            <span className="font-medium">Telefone:</span> {pool.telefone_cliente}
+          </div>
+        )}
       </CardContent>
+
+      <CardFooter className="flex justify-between pt-3">
+        <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onViewDetails(pool)}
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            Ver
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(pool)}
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            Editar
+          </Button>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+          onClick={() => onDelete(pool.id)}
+        >
+          <Trash2 className="h-4 w-4 mr-1" />
+          Excluir
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
