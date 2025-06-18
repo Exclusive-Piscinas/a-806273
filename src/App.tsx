@@ -20,6 +20,7 @@ import { AppSettingsProvider } from "./contexts/AppSettingsContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 import { trackPageView } from "./utils/analytics";
 
 const routes = [
@@ -51,11 +52,15 @@ const queryClient = new QueryClient({
 
 const RouterChangeHandler = () => {
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    const currentPath = window.location.pathname;
-    const pageName = currentPath === '/' ? 'painel' : currentPath.replace(/^\//, '');
-    trackPageView(pageName);
+    try {
+      window.scrollTo(0, 0);
+      
+      const currentPath = window.location.pathname;
+      const pageName = currentPath === '/' ? 'painel' : currentPath.replace(/^\//, '');
+      trackPageView(pageName);
+    } catch (error) {
+      console.error('Error in RouterChangeHandler:', error);
+    }
   }, [location.pathname]);
   
   return null;
@@ -63,37 +68,39 @@ const RouterChangeHandler = () => {
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <AuthProvider>
-          <AppSettingsProvider>
-            <CRMProvider>
-              <BrowserRouter>
-                <TooltipProvider>
-                  <RouterChangeHandler />
-                  <Routes>
-                    {routes.map((route) => (
-                      <Route 
-                        key={route.path} 
-                        path={route.path} 
-                        element={
-                          route.protected ? (
-                            <ProtectedRoute>{route.element}</ProtectedRoute>
-                          ) : (
-                            route.element
-                          )
-                        } 
-                      />
-                    ))}
-                  </Routes>
-                  <Toaster />
-                </TooltipProvider>
-              </BrowserRouter>
-            </CRMProvider>
-          </AppSettingsProvider>
-        </AuthProvider>
-      </LanguageProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <AuthProvider>
+            <AppSettingsProvider>
+              <CRMProvider>
+                <BrowserRouter>
+                  <TooltipProvider>
+                    <RouterChangeHandler />
+                    <Routes>
+                      {routes.map((route) => (
+                        <Route 
+                          key={route.path} 
+                          path={route.path} 
+                          element={
+                            route.protected ? (
+                              <ProtectedRoute>{route.element}</ProtectedRoute>
+                            ) : (
+                              route.element
+                            )
+                          } 
+                        />
+                      ))}
+                    </Routes>
+                    <Toaster />
+                  </TooltipProvider>
+                </BrowserRouter>
+              </CRMProvider>
+            </AppSettingsProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 

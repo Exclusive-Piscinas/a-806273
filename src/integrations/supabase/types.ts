@@ -9,6 +9,32 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      cities: {
+        Row: {
+          country_id: number | null
+          id: number
+          name: string
+        }
+        Insert: {
+          country_id?: number | null
+          id?: never
+          name: string
+        }
+        Update: {
+          country_id?: number | null
+          id?: never
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cities_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "countries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clientes_piscinas: {
         Row: {
           cep: string | null
@@ -54,6 +80,21 @@ export type Database = {
           tipo_cliente?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      countries: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: never
+          name: string
+        }
+        Update: {
+          id?: never
+          name?: string
         }
         Relationships: []
       }
@@ -254,12 +295,64 @@ export type Database = {
         }
         Relationships: []
       }
+      your_table_name: {
+        Row: {
+          created_at: string | null
+          data: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data?: string | null
+          id?: never
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data?: string | null
+          id?: never
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      count_total_users: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      get_user_details: {
+        Args: Record<PropertyKey, never> | { user_id: number }
+        Returns: {
+          id: number
+          username: string
+          email: string
+        }[]
+      }
+      get_user_profile: {
+        Args: Record<PropertyKey, never> | { user_id: number }
+        Returns: {
+          id: number
+          username: string
+          email: string
+        }[]
+      }
+      update_updated_at_column: {
+        Args: { record_id: number; new_timestamp: string }
+        Returns: undefined
+      }
+      update_user_profile: {
+        Args:
+          | Record<PropertyKey, never>
+          | { user_id: number; new_username: string; new_email: string }
+          | { user_id: number; profile_data: Json }
+          | { user_id: number; username: string; email: string; bio: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

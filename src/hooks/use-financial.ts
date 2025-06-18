@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -18,12 +17,43 @@ export interface FinancialTransaction {
   updated_at: string;
 }
 
+// Input validation functions
+const validateAmount = (valor: number): boolean => {
+  return typeof valor === 'number' && valor > 0 && valor <= 999999999.99;
+};
+
+const validateTransactionType = (tipo: string): boolean => {
+  return ['receita', 'despesa'].includes(tipo);
+};
+
+const validatePaymentMethod = (forma_pagamento?: string): boolean => {
+  if (!forma_pagamento) return true;
+  return ['dinheiro', 'cartao_credito', 'cartao_debito', 'pix', 'transferencia', 'cheque'].includes(forma_pagamento);
+};
+
+const validateStatus = (status: string): boolean => {
+  return ['pendente', 'pago', 'cancelado'].includes(status);
+};
+
+const validateDescription = (descricao: string): boolean => {
+  return descricao.trim().length >= 3 && descricao.trim().length <= 500;
+};
+
+const validateCategory = (categoria: string): boolean => {
+  return categoria.trim().length >= 2 && categoria.trim().length <= 100;
+};
+
+const sanitizeString = (input: string): string => {
+  return input.trim().replace(/[<>]/g, '');
+};
+
 export const useFinancial = () => {
   const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTransactions = async () => {
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('financeiro_piscinas')
         .select('*')
@@ -41,13 +71,52 @@ export const useFinancial = () => {
 
   const addTransaction = async (transaction: Omit<FinancialTransaction, 'id' | 'created_at' | 'updated_at'>) => {
     try {
+      // Input validation
+      if (!validateAmount(transaction.valor)) {
+        toast.error('Valor deve ser um número positivo até R$ 999.999.999,99');
+        throw new Error('Valor inválido');
+      }
+
+      if (!validateTransactionType(transaction.tipo)) {
+        toast.error('Tipo de transação inválido');
+        throw new Error('Tipo inválido');
+      }
+
+      if (!validateDescription(transaction.descricao)) {
+        toast.error('Descrição deve ter entre 3 e 500 caracteres');
+        throw new Error('Descrição inválida');
+      }
+
+      if (!validateCategory(transaction.categoria)) {
+        toast.error('Categoria deve ter entre 2 e 100 caracteres');
+        throw new Error('Categoria inválida');
+      }
+
+      if (!validatePaymentMethod(transaction.forma_pagamento)) {
+        toast.error('Forma de pagamento inválida');
+        throw new Error('Forma de pagamento inválida');
+      }
+
+      if (!validateStatus(transaction.status)) {
+        toast.error('Status inválido');
+        throw new Error('Status inválido');
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Usuário não autenticado');
+
+      // Sanitize string inputs
+      const sanitizedTransaction = {
+        ...transaction,
+        categoria: sanitizeString(transaction.categoria),
+        descricao: sanitizeString(transaction.descricao),
+        observacoes: transaction.observacoes ? sanitizeString(transaction.observacoes) : undefined,
+      };
 
       const { data, error } = await supabase
         .from('financeiro_piscinas')
         .insert({
-          ...transaction,
+          ...sanitizedTransaction,
           user_id: user.id
         })
         .select()
@@ -59,16 +128,55 @@ export const useFinancial = () => {
       return data as FinancialTransaction;
     } catch (error) {
       console.error('Erro ao criar transação:', error);
-      toast.error('Erro ao criar transação');
+      if (error instanceof Error && !['Valor inválido', 'Tipo inválido', 'Descrição inválida', 'Categoria inválida', 'Forma de pagamento inválida', 'Status inválido'].includes(error.message)) {
+        toast.error('Erro interno. Tente novamente mais tarde.');
+      }
       throw error;
     }
   };
 
   const updateTransaction = async (id: string, updates: Partial<FinancialTransaction>) => {
     try {
+      // Validate updates if they exist
+      if (updates.valor !== undefined && !validateAmount(updates.valor)) {
+        toast.error('Valor deve ser um número positivo até R$ 999.999.999,99');
+        throw new Error('Valor inválido');
+      }
+
+      if (updates.tipo !== undefined && !validateTransactionType(updates.tipo)) {
+        toast.error('Tipo de transação inválido');
+        throw new Error('Tipo inválido');
+      }
+
+      if (updates.descricao !== undefined && !validateDescription(updates.descricao)) {
+        toast.error('Descrição deve ter entre 3 e 500 caracteres');
+        throw new Error('Descrição inválida');
+      }
+
+      if (updates.categoria !== undefined && !validateCategory(updates.categoria)) {
+        toast.error('Categoria deve ter entre 2 e 100 caracteres');
+        throw new Error('Categoria inválida');
+      }
+
+      if (updates.forma_pagamento !== undefined && !validatePaymentMethod(updates.forma_pagamento)) {
+        toast.error('Forma de pagamento inválida');
+        throw new Error('Forma de pagamento inválida');
+      }
+
+      if (updates.status !== undefined && !validateStatus(updates.status)) {
+        toast.error('Status inválido');
+        throw new Error('Status inválido');
+      }
+
+      // Sanitize string fields
+      const sanitizedUpdates = { ...updates };
+      if (updates.categoria) sanitizedUpdates.categoria = sanitizeString(updates.categoria);
+      if (updates.descricao) sanitizedUpdates.descricao = sanitizeString(updates.descricao);
+      if (updates.observacoes) sanitizedUpdates.observacoes = sanitizeString(updates.observacoes);
+
       const { data, error } = await supabase
         .from('financeiro_piscinas')
-        .update(updates)
+        .update(sanitizedUpdates)
         .eq('id', id)
         .select()
         .single();
@@ -79,13 +187,20 @@ export const useFinancial = () => {
       return data as FinancialTransaction;
     } catch (error) {
       console.error('Erro ao atualizar transação:', error);
-      toast.error('Erro ao atualizar transação');
+      if (error instanceof Error && !['Valor inválido', 'Tipo inválido', 'Descrição inválida', 'Categoria inválida', 'Forma de pagamento inválida', 'Status inválido'].includes(error.message)) {
+        toast.error('Erro interno. Tente novamente mais tarde.');
+      }
       throw error;
     }
   };
 
   const deleteTransaction = async (id: string) => {
     try {
+      if (!id || id.trim().length === 0) {
+        toast.error('ID da transação inválido');
+        throw new Error('ID inválido');
+      }
+
       const { error } = await supabase
         .from('financeiro_piscinas')
         .delete()
@@ -96,7 +211,9 @@ export const useFinancial = () => {
       toast.success('Transação excluída com sucesso!');
     } catch (error) {
       console.error('Erro ao excluir transação:', error);
-      toast.error('Erro ao excluir transação');
+      if (error instanceof Error && error.message !== 'ID inválido') {
+        toast.error('Erro interno. Tente novamente mais tarde.');
+      }
       throw error;
     }
   };
