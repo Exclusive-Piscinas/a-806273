@@ -166,7 +166,7 @@ const InventoryPage = () => {
     {
       value: 'inventory',
       label: t('inventory.items'),
-      content: <Inventory dateRange={dateRange} searchTerm={searchTerm} />
+      content: <Inventory />
     }
   ];
 

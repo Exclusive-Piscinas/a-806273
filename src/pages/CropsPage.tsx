@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
 import PageLayout from '../components/layout/PageLayout';
-import GuadeloupeHarvestTracking from '../components/GuadeloupeHarvestTracking';
-import GuadeloupeSpecificCrops from '../components/GuadeloupeSpecificCrops';
-import CropPlanning from '../components/CropPlanning';
+import SimpleHarvestTracking from '../components/SimpleHarvestTracking';
+import SimpleCrops from '../components/SimpleCrops';
+import SimplePlanning from '../components/SimplePlanning';
 import TabContainer, { TabItem } from '../components/layout/TabContainer';
 import { Button } from '@/components/ui/button';
 import { Download, Plus, Upload, Filter, RefreshCw, CalendarRange, Eye, Printer } from 'lucide-react';
@@ -21,10 +21,6 @@ import { useCRM } from '@/contexts/CRMContext';
 
 const CropsPage = () => {
   const [activeTab, setActiveTab] = useState<string>('harvest');
-  const { getModuleData } = useCRM();
-  
-  // Get harvest data for preview/print
-  const harvestData = getModuleData('cultures').items || [];
   
   // Print columns for different tabs
   const printColumns = {
@@ -51,12 +47,14 @@ const CropsPage = () => {
 
   // Actions based on the active tab
   const getTabActions = () => {
+    const emptyData: any[] = [];
+    
     switch (activeTab) {
       case 'harvest':
         return (
           <div className="flex flex-wrap gap-2">
             <PreviewPrintButton 
-              data={harvestData}
+              data={emptyData}
               moduleName="harvest"
               title="Suivi des Récoltes"
               columns={printColumns.harvest}
@@ -118,7 +116,7 @@ const CropsPage = () => {
         return (
           <div className="flex flex-wrap gap-2">
             <PreviewPrintButton 
-              data={getModuleData('cultures').items || []}
+              data={emptyData}
               moduleName="cultures"
               title="Cultures Spécifiques"
               columns={printColumns.specific}
@@ -150,7 +148,7 @@ const CropsPage = () => {
         return (
           <div className="flex flex-wrap gap-2">
             <PreviewPrintButton 
-              data={[]}
+              data={emptyData}
               moduleName="planning"
               title="Planification des Cultures"
               columns={printColumns.planning}
@@ -200,17 +198,17 @@ const CropsPage = () => {
     {
       value: 'harvest',
       label: 'Suivi des Récoltes',
-      content: <GuadeloupeHarvestTracking />
+      content: <SimpleHarvestTracking />
     },
     {
       value: 'specific',
       label: 'Cultures Spécifiques',
-      content: <GuadeloupeSpecificCrops />
+      content: <SimpleCrops />
     },
     {
       value: 'planning',
       label: 'Planification',
-      content: <CropPlanning />
+      content: <SimplePlanning />
     }
   ];
 

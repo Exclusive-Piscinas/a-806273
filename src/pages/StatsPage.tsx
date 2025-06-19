@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import Statistics from '../components/Statistics';
-import GuadeloupeHarvestTracking from '../components/GuadeloupeHarvestTracking';
+import SimpleStatistics from '../components/SimpleStatistics';
+import SimpleHarvestTracking from '../components/SimpleHarvestTracking';
 import { ChartConfig } from '../components/ui/chart-config';
 import { EditableTable, Column } from '../components/ui/editable-table';
 import { EditableField } from '../components/ui/editable-field';
@@ -270,7 +271,7 @@ const StatsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <GuadeloupeHarvestTracking />
+                <SimpleHarvestTracking />
               </motion.div>
             )}
             
@@ -280,7 +281,7 @@ const StatsPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <Statistics />
+                <SimpleStatistics />
               </motion.div>
             )}
           </div>
